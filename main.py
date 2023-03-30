@@ -17,9 +17,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
-    QMainWindow, QMenu, QMenuBar, QSizePolicy,
-    QSlider, QSpacerItem, QStatusBar, QVBoxLayout,
-    QWidget)
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QSlider, QSpacerItem, QStatusBar,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -86,11 +86,23 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.playButton = QPushButton(self.centralwidget)
+        self.playButton.setObjectName(u"playButton")
+        sizePolicy1.setHeightForWidth(self.playButton.sizePolicy().hasHeightForWidth())
+        self.playButton.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_3.addWidget(self.playButton)
+
         self.horizontalSlider = QSlider(self.centralwidget)
         self.horizontalSlider.setObjectName(u"horizontalSlider")
         self.horizontalSlider.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout.addWidget(self.horizontalSlider)
+        self.horizontalLayout_3.addWidget(self.horizontalSlider)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.verticalLayout.setStretch(0, 1)
         self.verticalLayout.setStretch(1, 16)
@@ -116,6 +128,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label_1.setText("")
         self.label_2.setText("")
+        self.playButton.setText(QCoreApplication.translate("MainWindow", u"\u64ad\u653e", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6", None))
     # retranslateUi
 

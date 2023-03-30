@@ -33,7 +33,7 @@ class VideoPlayer(QObject):
         # 获取self.cap的总帧数
         self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        self.play = True
+        self.play = False
 
 
     # def set_video_path(self, video_path):
@@ -48,12 +48,17 @@ class VideoPlayer(QObject):
     def set_play_status(self, status):
         self.play = status
 
+    def get_play_status(self):
+        return self.play
+
     def playVideo(self):
         start_time = time.time()
         count = 0
         fps = 0
         while self.play:
             ret, frame = self.cap.read()
+
+            frame_copy = frame.copy()
 
             pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
             self.progress_slider.emit(int(pos/self.total_frames*100))
@@ -72,16 +77,11 @@ class VideoPlayer(QObject):
 
             cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            self.image.emit(frame)
+            self.image.emit(frame_copy)
             self.result.emit(result)
-
-        # self.finished.emit()
 
 
 class YoloDetect(QObject):
-    
-    image = Signal(np.ndarray)
-    result = Signal(np.ndarray)
 
     def __init__(self, model):
         QObject.__init__(self)
@@ -90,8 +90,8 @@ class YoloDetect(QObject):
 
     def detect(self, frame):
     
-        frame_org = frame
-        frame = cv2.resize(frame, (int(852), int(480)))
+        # frame_org = frame
+        # frame = cv2.resize(frame, (int(852), int(480)))
         bboxes, labels, _ = self.detector(frame)
 
         # 使用阈值过滤推理结果，并绘制到原图中
@@ -102,11 +102,7 @@ class YoloDetect(QObject):
                 continue
             # 绘制bounding box 和 label 文本    
             self.draw_labels(frame, bbox, label_id)
-
-        # cv2.putText(frame, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         return frame
-        # self.image.emit(frame_org)
-        # self.result.emit(frame)
 
     def draw_labels(self, frame, bbox, label_id):
         [left, top, right, bottom] = bbox[0:4].astype(int)
@@ -118,15 +114,15 @@ class YoloDetect(QObject):
 
 class SegmentDetect(QObject):
     
-    image = Signal(np.ndarray)
-    result = Signal(np.ndarray)
+    # image = Signal(np.ndarray)
+    # result = Signal(np.ndarray)
 
     def __init__(self, model):
         QObject.__init__(self)
         self.seg_detector = Segmentor('model/'+model, 'cpu', 0)
     
     def detect(self, frame):
-        frame_org = frame
+        # frame_org = frame
         seg = self.seg_detector(frame)
 
         print(seg.shape)
@@ -145,8 +141,9 @@ class SegmentDetect(QObject):
         frame = frame * 0.5 + color_seg * 0.5
         frame = frame.astype(np.uint8)
 
-        self.image.emit(frame_org)
-        self.result.emit(frame)
+        return frame
+        # self.image.emit(frame_org)
+        # self.result.emit(frame)
     
     def get_palette(self, num_classes=256):
         state = np.random.get_state()
@@ -158,10 +155,6 @@ class SegmentDetect(QObject):
     
 
 class PoseDetect(QObject):
-    
-    image = Signal(np.ndarray)
-    result = Signal(np.ndarray)
-    finished = Signal()
 
     def __init__(self, model):
         QObject.__init__(self)
@@ -169,8 +162,6 @@ class PoseDetect(QObject):
         self.pose_detector = PoseDetector('model/pose', 'cpu', 0)
 
     def detect(self, frame):
-        # frame_org = frame.copy()
-     
         # apply detector
         bboxes, labels, _ = self.detector(frame)
         keep = np.logical_and(labels == 0, bboxes[..., 4] > 0.6)
@@ -179,11 +170,7 @@ class PoseDetect(QObject):
         # draw result
         frame = self.visualize(frame, result, 0.5, 1280)
 
-        # cv2.putText(frame, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
         return frame  
-        # self.image.emit(frame_org)
-        # self.result.emit(frame)
 
     def visualize(self, frame, keypoints, thr=0.5, resize=1280):
         skeleton = [(15, 13), (13, 11), (16, 14), (14, 12), (11, 12), (5, 11),
@@ -231,11 +218,14 @@ class MainWindow(QMainWindow):
         self.label_1 = self.ui.label_1
         self.label_2 = self.ui.label_2
         self.model_selector = self.ui.model
-        # self.progress_bar = self.ui.progressBar
         self.slide_bar = self.ui.horizontalSlider
+        self.play_button = self.ui.playButton
+
+        self.play_button.clicked.connect(self.play)
         # 读取model目录项的目录名
         self.model_dir = os.listdir('model')
         print(self.model_dir)
+
         # 设置model_selector的选项
         self.model_selector.addItems(self.model_dir)
         self.model_selector.setCurrentIndex(0)
@@ -260,18 +250,15 @@ class MainWindow(QMainWindow):
         
             self.videoPlayer.image.connect(lambda x: self.show_image(x, self.label_1))
             self.videoPlayer.result.connect(lambda x: self.show_image(x, self.label_2))
-            # self.videoPlayer.progress.connect(lambda x: self.set_progress(x, self.progress_bar))
             self.videoPlayer.progress_slider.connect(lambda x: self.slide_bar.setValue(x))
+
             self.slide_bar.sliderPressed.connect(self.stop_play)
             self.slide_bar.sliderReleased.connect(self.set_frame)
 
             self.begin.connect(self.videoPlayer.playVideo)
 
             self.videoPlayer.moveToThread(self.detector_thread)
-            self.videoPlayer.finished.connect(self.videoPlayer.deleteLater)
-            self.videoPlayer.finished.connect(self.detector_thread.deleteLater)
             self.detector_thread.start()
-            self.begin.emit()
         else:
             self.videoPlayer.set_detector(self.detector)
             self.videoPlayer.image.connect(lambda x: self.show_image(x, self.label_1))
@@ -283,6 +270,15 @@ class MainWindow(QMainWindow):
         self.videoPlayer.set_frame(self.slide_bar.value())
         self.begin.emit()
 
+    def play(self):
+        play_status = self.videoPlayer.get_play_status()
+        if play_status == False:    
+            self.videoPlayer.set_play_status(True)
+            self.begin.emit()
+            self.play_button.setText('暂停')
+        else:
+            self.videoPlayer.set_play_status(False)
+            self.play_button.setText('播放')
 
     def stop_play(self):
         self.videoPlayer.set_play_status(False)
