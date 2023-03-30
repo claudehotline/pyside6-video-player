@@ -35,13 +35,14 @@ class SingleVideoPlayerWidget(QWidget):
         self.video_dialog_button.clicked.connect(self.open_video_dialog)
         # 读取model目录项的目录名
         self.model_dir = os.listdir('model')
-        print(self.model_dir)
+        # print(self.model_dir)
 
         # 设置model_selector的选项
         self.model_selector.addItems(self.model_dir)
         self.model_selector.setCurrentIndex(0)
         self.model_selector.currentTextChanged.connect(self.text_changed)
 
+        self.videoPlayer = None
         self.detector_thread = QThread()
 
 

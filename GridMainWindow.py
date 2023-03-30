@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QGridLayout
-from widgets.VideoPlayerWidget import VideoPlayerWidget
+from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QGridLayout
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
 import sys
 
@@ -7,10 +6,6 @@ class MainWindow(QMainWindow):
     
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        # self.videoPlayerWidget1 = SingleVideoPlayerWidget(self)
-        # self.videoPlayerWidget2 = SingleVideoPlayerWidget(self)
-        # self.videoPlayerWidget3 = SingleVideoPlayerWidget(self)
-        # self.videoPlayerWidget4 = SingleVideoPlayerWidget(self)
         # 创建GridLayout
         grid = QGridLayout()
         row = 4
@@ -33,7 +28,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         for w in self.videoPlayerWidgetList:
-            w.release()
+            if w.videoPlayer != None:
+                w.release()
         event.accept()
 
 if __name__ == "__main__":
