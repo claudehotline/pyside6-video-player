@@ -10,7 +10,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from mmdeploy_python import Detector, Segmentor, PoseDetector, VideoRecognizer
-from main import Ui_MainWindow
+from ui.main import Ui_MainWindow
 import numpy as np
 
 class VideoPlayer(QObject):

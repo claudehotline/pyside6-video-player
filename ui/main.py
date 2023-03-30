@@ -47,12 +47,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.model)
 
-        self.comboBox = QComboBox(self.centralwidget)
-        self.comboBox.setObjectName(u"comboBox")
-        sizePolicy1.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
-        self.comboBox.setSizePolicy(sizePolicy1)
+        self.videoDialogButton = QPushButton(self.centralwidget)
+        self.videoDialogButton.setObjectName(u"videoDialogButton")
 
-        self.horizontalLayout_2.addWidget(self.comboBox)
+        self.horizontalLayout_2.addWidget(self.videoDialogButton)
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -126,6 +124,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.videoDialogButton.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u89c6\u9891\u6587\u4ef6", None))
         self.label_1.setText("")
         self.label_2.setText("")
         self.playButton.setText(QCoreApplication.translate("MainWindow", u"\u64ad\u653e", None))
