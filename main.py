@@ -18,7 +18,8 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QHBoxLayout, QLabel,
     QMainWindow, QMenu, QMenuBar, QSizePolicy,
-    QSpacerItem, QStatusBar, QVBoxLayout, QWidget)
+    QSlider, QSpacerItem, QStatusBar, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -84,6 +85,12 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.horizontalSlider = QSlider(self.centralwidget)
+        self.horizontalSlider.setObjectName(u"horizontalSlider")
+        self.horizontalSlider.setOrientation(Qt.Horizontal)
+
+        self.verticalLayout.addWidget(self.horizontalSlider)
 
         self.verticalLayout.setStretch(0, 1)
         self.verticalLayout.setStretch(1, 16)

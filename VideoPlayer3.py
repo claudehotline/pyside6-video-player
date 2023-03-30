@@ -12,10 +12,14 @@ from PySide6.QtWidgets import *
 from mmdeploy_python import Detector, Segmentor, PoseDetector, VideoRecognizer
 from main import Ui_MainWindow
 import numpy as np
+import time
 
 class VideoPlayer(QObject):
 
     finished = Signal()
+    progress_slider = Signal(int)
+    image = Signal(np.ndarray)
+    result = Signal(np.ndarray)
 
     def __init__(self, video_path):
         QObject.__init__(self)
@@ -26,6 +30,11 @@ class VideoPlayer(QObject):
         self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # 获取self.cap的总帧数
+        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        self.play = True
+
 
     # def set_video_path(self, video_path):
     #     self.cap = cv2.VideoCapture(video_path)
@@ -33,15 +42,40 @@ class VideoPlayer(QObject):
     def set_detector(self, detector):
         self.detector = detector
 
+    def set_frame(self, frame):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(self.total_frames * frame / 100))
+
+    def set_play_status(self, status):
+        self.play = status
+
     def playVideo(self):
-        while True:
+        start_time = time.time()
+        count = 0
+        fps = 0
+        while self.play:
             ret, frame = self.cap.read()
+
+            pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            self.progress_slider.emit(int(pos/self.total_frames*100))
 
             if not ret:
               break
-            print(ret)
-            self.detector.detect(frame)
-        self.finished.emit()
+
+            result = self.detector.detect(frame)
+
+            count += 1
+            end_time = time.time()
+            if end_time - start_time >= 1:
+                fps = count
+                count = 0
+                start_time = time.time()
+
+            cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+            self.image.emit(frame)
+            self.result.emit(result)
+
+        # self.finished.emit()
 
 
 class YoloDetect(QObject):
@@ -69,8 +103,10 @@ class YoloDetect(QObject):
             # 绘制bounding box 和 label 文本    
             self.draw_labels(frame, bbox, label_id)
 
-        self.image.emit(frame_org)
-        self.result.emit(frame)
+        # cv2.putText(frame, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        return frame
+        # self.image.emit(frame_org)
+        # self.result.emit(frame)
 
     def draw_labels(self, frame, bbox, label_id):
         [left, top, right, bottom] = bbox[0:4].astype(int)
@@ -133,7 +169,7 @@ class PoseDetect(QObject):
         self.pose_detector = PoseDetector('model/pose', 'cpu', 0)
 
     def detect(self, frame):
-        frame_org = frame.copy()
+        # frame_org = frame.copy()
      
         # apply detector
         bboxes, labels, _ = self.detector(frame)
@@ -142,9 +178,12 @@ class PoseDetect(QObject):
         result = self.pose_detector(frame, bboxes)
         # draw result
         frame = self.visualize(frame, result, 0.5, 1280)
-            
-        self.image.emit(frame_org)
-        self.result.emit(frame)
+
+        # cv2.putText(frame, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+        return frame  
+        # self.image.emit(frame_org)
+        # self.result.emit(frame)
 
     def visualize(self, frame, keypoints, thr=0.5, resize=1280):
         skeleton = [(15, 13), (13, 11), (16, 14), (14, 12), (11, 12), (5, 11),
@@ -192,6 +231,8 @@ class MainWindow(QMainWindow):
         self.label_1 = self.ui.label_1
         self.label_2 = self.ui.label_2
         self.model_selector = self.ui.model
+        # self.progress_bar = self.ui.progressBar
+        self.slide_bar = self.ui.horizontalSlider
         # 读取model目录项的目录名
         self.model_dir = os.listdir('model')
         print(self.model_dir)
@@ -217,8 +258,12 @@ class MainWindow(QMainWindow):
             self.videoPlayer = VideoPlayer('04.mp4')
             self.videoPlayer.set_detector(self.detector)
         
-            self.videoPlayer.detector.image.connect(lambda x: self.show_image(x, self.label_1))
-            self.videoPlayer.detector.result.connect(lambda x: self.show_image(x, self.label_2))
+            self.videoPlayer.image.connect(lambda x: self.show_image(x, self.label_1))
+            self.videoPlayer.result.connect(lambda x: self.show_image(x, self.label_2))
+            # self.videoPlayer.progress.connect(lambda x: self.set_progress(x, self.progress_bar))
+            self.videoPlayer.progress_slider.connect(lambda x: self.slide_bar.setValue(x))
+            self.slide_bar.sliderPressed.connect(self.stop_play)
+            self.slide_bar.sliderReleased.connect(self.set_frame)
 
             self.begin.connect(self.videoPlayer.playVideo)
 
@@ -229,8 +274,22 @@ class MainWindow(QMainWindow):
             self.begin.emit()
         else:
             self.videoPlayer.set_detector(self.detector)
-            self.videoPlayer.detector.image.connect(lambda x: self.show_image(x, self.label_1))
-            self.videoPlayer.detector.result.connect(lambda x: self.show_image(x, self.label_2))
+            self.videoPlayer.image.connect(lambda x: self.show_image(x, self.label_1))
+            self.videoPlayer.result.connect(lambda x: self.show_image(x, self.label_2))
+    
+
+    def set_frame(self):
+        self.videoPlayer.set_play_status(True)
+        self.videoPlayer.set_frame(self.slide_bar.value())
+        self.begin.emit()
+
+
+    def stop_play(self):
+        self.videoPlayer.set_play_status(False)
+
+    @staticmethod
+    def set_progress(value, progress_bar):
+        progress_bar.setValue(value)
 
     def closeEvent(self, event):
         if self.detector_thread.isRunning:
