@@ -3,7 +3,7 @@ import sys
 
 from PySide6.QtCore import Qt, Signal, QThread
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QFileDialog, QWidget
+from PySide6.QtWidgets import QFileDialog, QWidget, QApplication
 from ui.single_video_player_widget import Ui_Form
 
 from player.OpencvVideoPlayer import OpencvVideoPlayer
@@ -97,19 +97,20 @@ class SingleVideoPlayerWidget(QWidget):
 
         self.videoSource_selector.show()
 
-        if not self.detector_thread.isRunning():
+        # if not self.videoPlayer.videoFrameReaderThread.isRunning():
+        if not self.videoPlayer:
 
-            self.videoPlayer = SingleOpencvVideoPlayer()
+            self.videoPlayer = OpencvVideoPlayer()
             self.videoPlayer.set_detector(self.detector)
         
             # self.videoPlayer.image.connect(lambda x: self.show_image(x, self.label))
-            self.videoPlayer.result.connect(lambda x: self.show_image(x, self.label))
+            self.videoPlayer.videoFrameProcessor.result.connect(lambda x: self.show_image(x, self.label))
             self.videoPlayer.progress_slider.connect(lambda x: self.slide_bar.setValue(x))
 
             self.slide_bar.sliderPressed.connect(self.stop_play)
             self.slide_bar.sliderReleased.connect(self.set_frame)
 
-            self.begin.connect(self.videoPlayer.playVideo)
+            self.begin.connect(self.videoPlayer.playVideo2)
 
             self.videoPlayer.moveToThread(self.detector_thread)
             self.detector_thread.start()
@@ -194,3 +195,13 @@ class SingleVideoPlayerWidget(QWidget):
         image = QImage(img_src, img_src.shape[1], img_src.shape[0], QImage.Format_BGR888)
         image = image.scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         label.setPixmap(QPixmap.fromImage(image))
+
+    def closeEvent(self, event):
+        event.accept()
+        os._exit(0)
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = SingleVideoPlayerWidget()
+    window.show()
+    sys.exit(app.exec())

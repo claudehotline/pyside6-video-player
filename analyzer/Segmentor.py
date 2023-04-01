@@ -13,8 +13,8 @@ import numpy as np
 
 class Segment():
 
-    def __init__(self, model):
-        self.seg_detector = Segmentor('model/'+model, 'cuda', 0)
+    def __init__(self, model_path):
+        self.seg_detector = Segmentor(model_path, 'cuda', 0)
     
     def detect(self, frame):
         seg = self.seg_detector(frame)

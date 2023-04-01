@@ -14,8 +14,8 @@ from mmdeploy_python import Detector
 
 class YoloDetector():
 
-    def __init__(self, model):
-        self.detector = Detector('model/'+model, 'cuda', 0)
+    def __init__(self, model_path):
+        self.detector = Detector(model_path, 'cuda', 0)
 
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)

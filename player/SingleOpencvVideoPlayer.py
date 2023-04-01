@@ -3,7 +3,7 @@ from PySide6.QtCore import QObject, Signal
 import numpy as np
 import time
 
-class OpencvVideoPlayer(QObject):
+class SingleOpencvVideoPlayer(QObject):
 
     finished = Signal()
     progress_slider = Signal(int)
@@ -13,10 +13,10 @@ class OpencvVideoPlayer(QObject):
         QObject.__init__(self)
         self.play = False
 
-
     def set_video(self, video_path):
+        self.video_path = video_path
         # 创建 VideoCapture 对象并指定要读取的视频文件路径
-        self.cap = cv2.VideoCapture(video_path)
+        self.cap = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
         # 获取视频的帧率、宽度和高度
         self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -41,25 +41,15 @@ class OpencvVideoPlayer(QObject):
         count = 0
         fps = 0
         while self.play:
-            start_detect = time.time()
             ret, frame = self.cap.read()
 
             if not ret:
                 break
 
-            # frame_copy = frame.copy()
-            # # 在frame_copy上绘制self.fps, self.width, self.height, self.total_frames
-            # cv2.putText(frame_copy, 'FPS: {}'.format(self.fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            # cv2.putText(frame_copy, 'Width: {}'.format(self.width), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            # cv2.putText(frame_copy, 'Height: {}'.format(self.height), (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            # cv2.putText(frame_copy, 'Total Frames: {}'.format(self.total_frames), (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
             pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
             self.progress_slider.emit(int(pos/self.total_frames*100))
 
-            
             result = self.detector.detect(frame)
-            
 
             count += 1
             end_time = time.time()
@@ -70,10 +60,39 @@ class OpencvVideoPlayer(QObject):
 
             cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            # self.image.emit(frame_copy)
+            self.result.emit(result)
+
+    def playNetVideo(self):
+        print("1")
+        start_time = time.time()
+        count = 0
+        fps = 0
+        while self.play:
+            start_detect = time.time()
+
+            if not ret:
+                print(2)
+                self.cap = cv2.VideoCapture(self.video_path, cv2.CAP_FFMPEG)
+                ret, frame = self.cap.read()
+                # continue
+
+            pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+            self.progress_slider.emit(int(pos/self.total_frames*100))
+
+            result = self.detector.detect(frame)
+            
+            count += 1
+            end_time = time.time()
+            if end_time - start_time >= 1:
+                fps = count
+                count = 0
+                start_time = time.time()
+
+            cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
             self.result.emit(result)
 
             end_detect = time.time()
             detect_time = end_detect - start_detect
             # opencv 帧率控制
-            cv2.waitKey(int(1000/self.fps - detect_time*1000))
+            cv2.waitKey(int(1000/self.fps - detect_time*1000))    
