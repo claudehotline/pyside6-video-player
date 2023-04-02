@@ -5,7 +5,7 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QFileDialog, QWidget
 from ui.video_player_widget import Ui_videoPlayerWidget
 
-from player.OpencvVideoPlayer import OpencvVideoPlayer
+from player.VideoPlayer import OpencvVideoPlayer
 from analyzer.PoseDetector import PoseDetect
 from analyzer.Segmentor import Segment
 from analyzer.YoloDetector import YoloDetector

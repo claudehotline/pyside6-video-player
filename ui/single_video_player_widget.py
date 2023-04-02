@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSlider, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSlider, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -35,46 +35,20 @@ class Ui_Form(object):
         self.horizontalLayout.setSpacing(2)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.detectType = QComboBox(self.tools)
-        self.detectType.setObjectName(u"detectType")
-
-        self.horizontalLayout.addWidget(self.detectType)
-
-        self.model = QComboBox(self.tools)
-        self.model.setObjectName(u"model")
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.model.sizePolicy().hasHeightForWidth())
-        self.model.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout.addWidget(self.model)
-
-        self.videoSource = QComboBox(self.tools)
-        self.videoSource.setObjectName(u"videoSource")
-
-        self.horizontalLayout.addWidget(self.videoSource)
-
-        self.videoDialogButton = QPushButton(self.tools)
-        self.videoDialogButton.setObjectName(u"videoDialogButton")
-        sizePolicy.setHeightForWidth(self.videoDialogButton.sizePolicy().hasHeightForWidth())
-        self.videoDialogButton.setSizePolicy(sizePolicy)
-
-        self.horizontalLayout.addWidget(self.videoDialogButton)
-
-        self.camList = QComboBox(self.tools)
-        self.camList.setObjectName(u"camList")
-
-        self.horizontalLayout.addWidget(self.camList)
-
-        self.videoUrlInput = QLineEdit(self.tools)
-        self.videoUrlInput.setObjectName(u"videoUrlInput")
-
-        self.horizontalLayout.addWidget(self.videoUrlInput)
-
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.playerSettingBtn = QPushButton(self.tools)
+        self.playerSettingBtn.setObjectName(u"playerSettingBtn")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.playerSettingBtn.sizePolicy().hasHeightForWidth())
+        self.playerSettingBtn.setSizePolicy(sizePolicy)
+        self.playerSettingBtn.setMaximumSize(QSize(30, 16777215))
+
+        self.horizontalLayout.addWidget(self.playerSettingBtn, 0, Qt.AlignLeft)
 
 
         self.verticalLayout.addWidget(self.tools)
@@ -129,12 +103,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.detectType.setPlaceholderText(QCoreApplication.translate("Form", u"\u68c0\u6d4b\u7c7b\u522b", None))
-        self.model.setPlaceholderText(QCoreApplication.translate("Form", u"\u9009\u62e9\u6a21\u578b", None))
-        self.videoSource.setPlaceholderText(QCoreApplication.translate("Form", u"\u89c6\u9891\u6765\u6e90", None))
-        self.videoDialogButton.setText(QCoreApplication.translate("Form", u"\u9009\u62e9\u89c6\u9891\u6587\u4ef6", None))
-        self.camList.setPlaceholderText(QCoreApplication.translate("Form", u"\u9009\u62e9\u6444\u50cf\u5934", None))
-        self.videoUrlInput.setPlaceholderText(QCoreApplication.translate("Form", u"\u8f93\u5165\u89c6\u9891\u6d41\u5730\u5740", None))
+        self.playerSettingBtn.setText(QCoreApplication.translate("Form", u"\u8bbe\u7f6e", None))
         self.label.setText("")
         self.playButton.setText(QCoreApplication.translate("Form", u"\u64ad\u653e", None))
     # retranslateUi

@@ -39,28 +39,28 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="detectType">
               <property name="text">
                <string>检测类别</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_4">
+             <widget class="QRadioButton" name="detection">
               <property name="text">
                <string>目标检测</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_5">
+             <widget class="QRadioButton" name="segmentation">
               <property name="text">
                <string>语义分割</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="radioButton_6">
+             <widget class="QRadioButton" name="poseRecognition">
               <property name="text">
                <string>姿态识别</string>
               </property>
@@ -79,14 +79,14 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="model1Label">
               <property name="text">
                <string>选择模型</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBox_4"/>
+             <widget class="QComboBox" name="model1"/>
             </item>
             <item>
              <spacer name="horizontalSpacer">
@@ -102,14 +102,14 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="model2Label">
               <property name="text">
                <string>选择模型</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBox_5"/>
+             <widget class="QComboBox" name="model2"/>
             </item>
            </layout>
           </widget>
@@ -142,21 +142,21 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
-                <widget class="QRadioButton" name="radioButton">
+                <widget class="QRadioButton" name="localFile">
                  <property name="text">
                   <string>本地视频</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QRadioButton" name="radioButton_2">
+                <widget class="QRadioButton" name="localCam">
                  <property name="text">
                   <string>本地摄像头</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QRadioButton" name="radioButton_3">
+                <widget class="QRadioButton" name="netUrl">
                  <property name="text">
                   <string>网络视频</string>
                  </property>
@@ -174,8 +174,8 @@
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_3">
-               <item>
-                <widget class="QPushButton" name="pushButton">
+               <item alignment="Qt::AlignTop">
+                <widget class="QPushButton" name="FileDialogBtn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -187,8 +187,8 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QComboBox" name="comboBox">
+               <item alignment="Qt::AlignVCenter">
+                <widget class="QComboBox" name="localCamSelector">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -198,7 +198,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit"/>
+                <widget class="QLineEdit" name="netUrlInput"/>
                </item>
               </layout>
              </widget>

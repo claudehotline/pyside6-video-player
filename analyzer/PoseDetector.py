@@ -16,9 +16,9 @@ import numpy as np
 
 class PoseDetect():
 
-    def __init__(self, model_path):
-        self.detector = Detector('model/detect/yolov8m_trt', 'cuda', 0)
-        self.pose_detector = PoseDetector('model/pose/hrnet_trt', 'cuda', 0)
+    def __init__(self, model_path1, model_path2):
+        self.detector = Detector(model_path1, 'cuda', 0)
+        self.pose_detector = PoseDetector(model_path2, 'cuda', 0)
 
     def detect(self, frame):
         # apply detector

@@ -8,6 +8,7 @@ class OpencvVideoDecoder(QObject):
     self.stream = None
     self.frame_buffer = None
     self.cap = None
+    self.decoding = False
 
 
   def set_frame_buffer(self, frame_buffer):
@@ -19,14 +20,19 @@ class OpencvVideoDecoder(QObject):
     self.cap = cv2.VideoCapture(self.stream)
     self.frame_rate = self.cap.get(cv2.CAP_PROP_FPS)
 
+  def get_video_path(self):
+    return self.stream
+
+  def set_decoding_status(self, status):
+    self.decoding = status
 
   def run(self):
 
-    while True:
+    while self.decoding:
+
       ret, frame = self.cap.read()
       if not ret:
         break
       self.frame_buffer.add_frame(frame)
-      print(self.frame_buffer.get_buffer_length())
 
     self.cap.release()
