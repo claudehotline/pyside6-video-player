@@ -18,8 +18,9 @@ class VideoFrameProcessor(QObject):
         self.detecting = False
         self.detectType = detectType
         self.model_list = model_list
-
         self.set_detector(self.detectType, self.model_list)
+
+        self.is_decoding_finished = False
 
     def set_detector(self, detectType, model_list):
         if detectType == '目标检测':
@@ -46,14 +47,18 @@ class VideoFrameProcessor(QObject):
     def set_detecting_status(self, status):
         self.detecting = status
 
+    def decoding_finished(self):
+        print('decoding_finished')
+        self.is_decoding_finished = True
+
     def run(self):
         start_time = time.time()
         frame_count = 0
         fps=0
         while self.detecting:
-            # print(2)
             # 如果帧缓冲区中有帧，则取出一帧进行处理
             frame = self.frame_buffer.get_frame()
+            
             if frame is not None:
                 result = self.detector.detect(frame)
 
@@ -66,3 +71,6 @@ class VideoFrameProcessor(QObject):
                 cv2.putText(result, "FPS: {:.2f}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
                 self.result.emit(result)
+            if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
+                print('视频处理结束')
+                self.detecting = False

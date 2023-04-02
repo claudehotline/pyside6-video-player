@@ -1,7 +1,10 @@
 import cv2
 from PySide6.QtCore import QObject
+from PySide6.QtCore import Signal
 
 class OpencvVideoDecoder(QObject):
+
+  decoding_finished = Signal()
 
   def __init__(self):
     super().__init__()
@@ -35,4 +38,6 @@ class OpencvVideoDecoder(QObject):
         break
       self.frame_buffer.add_frame(frame)
 
-    self.cap.release()
+    print('decoder stop')
+    self.decoding_finished.emit()
+    # self.cap.release()

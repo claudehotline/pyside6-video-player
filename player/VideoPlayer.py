@@ -53,6 +53,7 @@ class VideoPlayer(QObject):
         self.videoFrameProcessor.set_frame_buffer(self.frameBuffer)
         self.videoFrameProcessorThread.started.connect(self.videoFrameProcessor.run)
         self.start_detect.connect(self.videoFrameProcessor.run)
+        self.videoFrameReader.decoding_finished.connect(self.send_decoding_finished_to_process)
         self.videoFrameProcessor.moveToThread(self.videoFrameProcessorThread)
 
     def set_frame(self, frame):
@@ -60,11 +61,9 @@ class VideoPlayer(QObject):
 
     def set_play_status(self, status):
         if status == False:
-            # self.videoFrameReader.set_decoding_status(False)
             self.videoFrameProcessor.set_detecting_status(False)
             self.play = status
         else:
-            # self.videoFrameReader.set_decoding_status(True)
             self.videoFrameProcessor.set_detecting_status(True)
             self.start_detect.emit()
             self.play = status
@@ -88,8 +87,22 @@ class VideoPlayer(QObject):
             video_decoder.set_video_path(video_path)
             return video_decoder
 
+    def send_decoding_finished_to_process(self):
+        self.videoFrameProcessor.decoding_finished()
+
     def playVideo(self):
         print('playing')
         self.videoFrameProcessorThread.start()
         self.videoFrameReaderThread.start()
         self.play = True
+
+    def release(self):
+        if self.videoFrameReaderThread.isRunning():
+            self.videoFrameReader.set_decoding_status(False)
+            self.videoFrameReaderThread.quit()
+            self.videoFrameReaderThread.wait()
+            self.videoFrameReader.cap.release()      
+        if self.videoFrameProcessorThread.isRunning():
+            self.videoFrameProcessor.set_detecting_status(False)
+            self.videoFrameProcessorThread.quit()
+            self.videoFrameProcessorThread.wait()

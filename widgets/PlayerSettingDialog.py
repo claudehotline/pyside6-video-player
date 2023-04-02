@@ -30,10 +30,8 @@ class PlayerSettingDialog(QWidget):
         # 模型选择器
         self.model1_selector = self.ui.model1
         self.model1_list = os.listdir('model/detect')
-        # self.model1_selector.currentTextChanged.connect(self.model1_text_changed)
         self.model1_selector.addItems(self.model1_list)
         self.model2_selector = self.ui.model2
-        # self.model2_selector.currentTextChanged.connect(self.model2_text_changed)
         
         # 视频来源单选按钮组
         self.local_video_file_radio_button = self.ui.localFile
@@ -51,7 +49,6 @@ class PlayerSettingDialog(QWidget):
         # 摄像头选择器
         self.local_cam_selector = self.ui.localCamSelector
         self.local_cam_selector.setDisabled(True)
-        # self.local_cam_selector.connect(self.local_cam_selector_text_changed)
         # 网络视频地址输入框
         self.net_video_url_input = self.ui.netUrlInput
         self.net_video_url_input.setDisabled(True)
@@ -96,11 +93,6 @@ class PlayerSettingDialog(QWidget):
         self.local_cam_selector.setDisabled(True)
         self.net_video_url_input.setDisabled(False)
         self.file_dialog_button.setDisabled(True)
-
-
-    # def local_cam_selector_text_changed(self):
-    #     pass
-
 
 
     def open_video_dialog(self):

@@ -1,98 +1,82 @@
-import cv2
-from PySide6.QtCore import QObject, Signal
-import numpy as np
-import time
+from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtWidgets import QWidget, QApplication
+from ui.single_video_player_widget import Ui_Form
+from widgets.PlayerSettingDialog import PlayerSettingDialog
 
-class SingleOpencvVideoPlayer(QObject):
 
-    finished = Signal()
-    progress_slider = Signal(int)
-    result = Signal(np.ndarray)
+class SingleVideoPlayerWidget(QWidget):
+    
+    begin = Signal()
+    
+    def __init__(self, parent=None):
+        super(SingleVideoPlayerWidget, self).__init__(parent)
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
+    
 
-    def __init__(self):
-        QObject.__init__(self)
-        self.play = False
+        self.label = self.ui.label
 
-    def set_video(self, video_path):
-        self.video_path = video_path
-        # 创建 VideoCapture 对象并指定要读取的视频文件路径
-        self.cap = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
-        # 获取视频的帧率、宽度和高度
-        self.fps = int(self.cap.get(cv2.CAP_PROP_FPS))
-        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        # 获取self.cap的总帧数
-        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        # 选择视频文件按钮
+        self.video_dialog_button = self.ui.playerSettingBtn
+        self.video_dialog_button.clicked.connect(self.show_player_setting_dialog)
 
-    def set_detector(self, detector):
-        self.detector = detector
+        # 播放进度条
+        self.slide_bar = self.ui.horizontalSlider
 
-    def set_frame(self, frame):
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(self.total_frames * frame / 100))
+        # 播放/暂停按钮
+        self.play_button = self.ui.playButton
+        self.play_button.clicked.connect(self.play)
 
-    def set_play_status(self, status):
-        self.play = status
+        self.videoPlayer = VideoPlayer()
+        self.videoPlayer_thread = QThread()
+        self.begin.connect(self.videoPlayer.playVideo)
+        self.videoPlayer.moveToThread(self.videoPlayer_thread)
+        self.videoPlayer_thread.start()
 
-    def get_play_status(self):
-        return self.play
 
-    def playVideo(self):
-        start_time = time.time()
-        count = 0
-        fps = 0
-        while self.play:
-            ret, frame = self.cap.read()
+    def show_player_setting_dialog(self):
+        self.player_setting_dialog = PlayerSettingDialog()
+        self.player_setting_dialog.show()
+        self.player_setting_dialog.settings.connect(lambda detectType, model_list, video_path: self.videoPlayer.set_player(detectType, model_list, video_path))
+    
 
-            if not ret:
-                break
+    def set_frame(self):
+        self.videoPlayer.set_play_status(True)
+        self.videoPlayer.set_frame(self.slide_bar.value())
+        self.begin.emit()
 
-            pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
-            self.progress_slider.emit(int(pos/self.total_frames*100))
+    def play(self):
+        play_status = self.videoPlayer.get_play_status()
+        play_is_setting_done = self.videoPlayer.get_setting_status()
+        if play_status == False and play_is_setting_done:    
+            self.videoPlayer.set_play_status(True)
+            self.videoPlayer.get_video_frame_processor().result.connect(lambda result: self.show_image(result, self.label))
+            self.begin.emit()
+            self.play_button.setText('暂停')
+        else:
+            self.videoPlayer.set_play_status(False)
+            self.play_button.setText('播放')
 
-            result = self.detector.detect(frame)
+    def stop_play(self):
+        self.videoPlayer.set_play_status(False)
 
-            count += 1
-            end_time = time.time()
-            if end_time - start_time >= 1:
-                fps = count
-                count = 0
-                start_time = time.time()
+    @staticmethod
+    def set_progress(value, progress_bar):
+        progress_bar.setValue(value)
 
-            cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    @staticmethod
+    def show_image(img_src, label):
+        image = QImage(img_src, img_src.shape[1], img_src.shape[0], QImage.Format_BGR888)
+        image = image.scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        label.setPixmap(QPixmap.fromImage(image))
 
-            self.result.emit(result)
+    def release(self):
+        if self.detector_thread.isRunning:
+            self.detector_thread.terminate()
+            self.detector_thread.wait()
+            self.videoPlayer.cap.release()
 
-    def playNetVideo(self):
-        print("1")
-        start_time = time.time()
-        count = 0
-        fps = 0
-        while self.play:
-            start_detect = time.time()
-
-            if not ret:
-                print(2)
-                self.cap = cv2.VideoCapture(self.video_path, cv2.CAP_FFMPEG)
-                ret, frame = self.cap.read()
-                # continue
-
-            pos = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
-            self.progress_slider.emit(int(pos/self.total_frames*100))
-
-            result = self.detector.detect(frame)
-            
-            count += 1
-            end_time = time.time()
-            if end_time - start_time >= 1:
-                fps = count
-                count = 0
-                start_time = time.time()
-
-            cv2.putText(result, 'FPS: {}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-            self.result.emit(result)
-
-            end_detect = time.time()
-            detect_time = end_detect - start_detect
-            # opencv 帧率控制
-            cv2.waitKey(int(1000/self.fps - detect_time*1000))    
+    # def closeEvent(self, event):
+    #     event.accept()
+    #     os._exit(0)
