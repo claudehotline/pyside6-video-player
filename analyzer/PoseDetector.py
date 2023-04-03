@@ -1,12 +1,14 @@
 import sys
 import os
 # sys.path.append('E:/Projects/deeplearning/mmlab/mmdeploy/build/bin/Release')
-os.add_dll_directory(
-    'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/bin')
-os.add_dll_directory(
-    'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/lib/x64')
-os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
-os.add_dll_directory('H:/opencv/build/x64/vc16/bin')
+sys.path.append('I:/mmdeploy/build/bin/Release')
+# os.add_dll_directory(
+#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/bin')
+# os.add_dll_directory(
+#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/lib/x64')
+# os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
+os.add_dll_directory('D:/opencv/build/x64/vc16/bin')
+os.add_dll_directory('D:/onnxruntime-win-x64-1.8.1/lib')
 
 import cv2
 from mmdeploy_python import Detector, PoseDetector
@@ -17,8 +19,10 @@ import numpy as np
 class PoseDetect():
 
     def __init__(self, model_path1, model_path2):
-        self.detector = Detector(model_path1, 'cuda', 0)
-        self.pose_detector = PoseDetector(model_path2, 'cuda', 0)
+        # self.detector = Detector(model_path1, 'cuda', 0)
+        # self.pose_detector = PoseDetector(model_path2, 'cuda', 0)
+        self.detector = Detector(model_path1, 'cpu', 0)
+        self.pose_detector = PoseDetector(model_path2, 'cpu', 0)
 
     def detect(self, frame):
         # apply detector

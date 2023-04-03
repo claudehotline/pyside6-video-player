@@ -20,3 +20,6 @@ class FrameBuffer(QObject):
         
     def get_buffer_length(self):
         return len(self._buffer)
+    
+    def clear_buffer(self):
+        self._buffer = []

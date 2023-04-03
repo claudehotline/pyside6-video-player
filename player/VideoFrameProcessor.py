@@ -11,6 +11,7 @@ from analyzer.PoseDetector import PoseDetect
 class VideoFrameProcessor(QObject):
     
     result = Signal(np.ndarray)
+    update_progress = Signal(int)
 
     def __init__(self, detectType, model_list):
         super().__init__()
@@ -21,6 +22,8 @@ class VideoFrameProcessor(QObject):
         self.set_detector(self.detectType, self.model_list)
 
         self.is_decoding_finished = False
+
+        self.current_frame = 0
 
     def set_detector(self, detectType, model_list):
         if detectType == '目标检测':
@@ -34,6 +37,9 @@ class VideoFrameProcessor(QObject):
             model_path2 = 'model/pose' + os.path.sep + model_list[1]
             self.detector = PoseDetect(model_path1, model_path2)
         self.detecting = True
+
+    def set_current_frame(self, current_frame):
+        self.current_frame = current_frame
     
     def set_frame_buffer(self, frame_buffer):
         self.frame_buffer = frame_buffer
@@ -51,6 +57,11 @@ class VideoFrameProcessor(QObject):
         print('decoding_finished')
         self.is_decoding_finished = True
 
+    def set_is_finished(self, status):
+        self.is_decoding_finished = status
+
+    
+
     def run(self):
         start_time = time.time()
         frame_count = 0
@@ -58,10 +69,11 @@ class VideoFrameProcessor(QObject):
         while self.detecting:
             # 如果帧缓冲区中有帧，则取出一帧进行处理
             frame = self.frame_buffer.get_frame()
-            
+            print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
                 result = self.detector.detect(frame)
-
+                self.current_frame = self.current_frame + 1
+                self.update_progress.emit(self.current_frame)
                 end_time = time.time()
                 frame_count += 1
                 if end_time - start_time > 1:

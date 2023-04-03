@@ -1,12 +1,15 @@
 import sys
 import os
 # sys.path.append('E:/Projects/deeplearning/mmlab/mmdeploy/build/bin/Release')
-os.add_dll_directory(
-    'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/bin')
-os.add_dll_directory(
-    'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/lib/x64')
-os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
-os.add_dll_directory('H:/opencv/build/x64/vc16/bin')
+sys.path.append('I:/mmdeploy/build/bin/Release')
+# os.add_dll_directory(
+#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/bin')
+# os.add_dll_directory(
+#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/lib/x64')
+# os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
+# os.add_dll_directory('H:/opencv/build/x64/vc16/bin')
+os.add_dll_directory('D:/opencv/build/x64/vc16/bin')
+os.add_dll_directory('D:/onnxruntime-win-x64-1.8.1/lib')
 
 from mmdeploy_python import Segmentor
 import numpy as np
@@ -14,7 +17,8 @@ import numpy as np
 class Segment():
 
     def __init__(self, model_path):
-        self.seg_detector = Segmentor(model_path, 'cuda', 0)
+        # self.seg_detector = Segmentor(model_path, 'cuda', 0)
+        self.seg_detector = Segmentor(model_path, 'cpu', 0)
     
     def detect(self, frame):
         seg = self.seg_detector(frame)

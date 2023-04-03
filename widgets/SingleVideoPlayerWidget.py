@@ -28,6 +28,9 @@ class SingleVideoPlayerWidget(QWidget):
 
         # 播放进度条
         self.slide_bar = self.ui.horizontalSlider
+        self.slide_bar.sliderPressed.connect(self.stop_play)
+        self.slide_bar.sliderReleased.connect(self.set_frame)
+        
 
         # 播放/暂停按钮
         self.play_button = self.ui.playButton
@@ -38,6 +41,8 @@ class SingleVideoPlayerWidget(QWidget):
         self.begin.connect(self.videoPlayer.playVideo)
         self.videoPlayer.moveToThread(self.videoPlayer_thread)
         self.videoPlayer_thread.start()
+
+        self.videoPlayer.update_progress_bar.connect(lambda value: self.set_progress(value, self.slide_bar))
 
 
     def show_player_setting_dialog(self):
@@ -67,8 +72,8 @@ class SingleVideoPlayerWidget(QWidget):
         self.videoPlayer.set_play_status(False)
 
     @staticmethod
-    def set_progress(value, progress_bar):
-        progress_bar.setValue(value)
+    def set_progress(value, slide_bar):
+        slide_bar.setValue(value)
 
     @staticmethod
     def show_image(img_src, label):

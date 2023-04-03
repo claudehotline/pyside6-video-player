@@ -12,7 +12,10 @@ class VideoPlayer(QObject):
     progress_slider = Signal(int)
     image = Signal(np.ndarray)
     result = Signal(np.ndarray)
+    set_frame_num = Signal(int)
     start_detect = Signal()
+    start_decode = Signal()
+    update_progress_bar = Signal(int)
 
     def __init__(self):
         QObject.__init__(self)
@@ -21,6 +24,7 @@ class VideoPlayer(QObject):
         self.videoFrameReader = None
         self.videoFrameProcessor = None
         self.is_setting_done = False
+        self.progress = 0
 
         self.videoFrameReaderThread = QThread()
         self.videoFrameProcessorThread = QThread()
@@ -45,6 +49,7 @@ class VideoPlayer(QObject):
         self.videoFrameReader = self.get_video_decoder(video_path)
         self.videoFrameReader.set_frame_buffer(self.frameBuffer)
         self.videoFrameReaderThread.started.connect(self.videoFrameReader.run)
+        self.start_decode.connect(self.videoFrameReader.run)
         self.videoFrameReader.moveToThread(self.videoFrameReaderThread)
         self.videoFrameReader.set_decoding_status(True)
 
@@ -53,11 +58,27 @@ class VideoPlayer(QObject):
         self.videoFrameProcessor.set_frame_buffer(self.frameBuffer)
         self.videoFrameProcessorThread.started.connect(self.videoFrameProcessor.run)
         self.start_detect.connect(self.videoFrameProcessor.run)
+        self.videoFrameProcessor.update_progress.connect(lambda x: self.update_progress(x))
+        self.set_frame_num.connect(lambda x:self.videoFrameProcessor.set_frame_num(x))
         self.videoFrameReader.decoding_finished.connect(self.send_decoding_finished_to_process)
         self.videoFrameProcessor.moveToThread(self.videoFrameProcessorThread)
 
     def set_frame(self, frame):
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(self.total_frames * frame / 100))
+        self.videoFrameReader.set_decoding_status(False)
+        self.frameBuffer.clear_buffer()
+        self.videoFrameProcessor.set_detecting_status(False)
+        self.videoFrameReader.set_frame(int(self.videoFrameReader.get_video_total_frames() * frame / 100))
+        self.videoFrameProcessor.set_current_frame(int(self.videoFrameReader.get_video_total_frames() * frame / 100))
+        self.videoFrameReader.set_decoding_status(True)
+        self.videoFrameProcessor.set_detecting_status(True)
+        self.videoFrameProcessor.set_is_finished(False)
+        self.start_decode.emit()
+        self.start_detect.emit()
+        self.play = True
+
+    def update_progress(self, frame_num):
+        self.progress = int(frame_num / self.videoFrameReader.get_video_total_frames() * 100)
+        self.update_progress_bar.emit(self.progress)
 
     def set_play_status(self, status):
         if status == False:
