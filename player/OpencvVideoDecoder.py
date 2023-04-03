@@ -1,6 +1,6 @@
 import cv2
 from PySide6.QtCore import QObject
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Slot
 
 class OpencvVideoDecoder(QObject):
 
@@ -12,8 +12,6 @@ class OpencvVideoDecoder(QObject):
     self.frame_buffer = None
     self.cap = None
     self.decoding = False
-    # self.pause = False
-
 
 
   def set_frame_buffer(self, frame_buffer):
@@ -41,6 +39,7 @@ class OpencvVideoDecoder(QObject):
   def set_pause_status(self, status):
     self.pause = status
 
+  @Slot()
   def run(self):
 
     while self.decoding:
@@ -49,8 +48,5 @@ class OpencvVideoDecoder(QObject):
       if not ret:
         break
       self.frame_buffer.add_frame(frame)
-
     print('decoder stop')
-    # if not self.pause:
     self.decoding_finished.emit()
-    # self.cap.release()

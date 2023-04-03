@@ -1,13 +1,12 @@
-import os
-import sys
-
-from PySide6.QtCore import Qt, Signal, QThread
+from PySide6.QtCore import Qt, Signal, QThread, Slot
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QWidget, QApplication
+from PySide6.QtWidgets import QWidget, QProgressBar, QLabel
 from ui.single_video_player_widget import Ui_Form
 
 from player.VideoPlayer import VideoPlayer
 from widgets.PlayerSettingDialog import PlayerSettingDialog
+
+import numpy as np
 
 
 class SingleVideoPlayerWidget(QWidget):
@@ -36,26 +35,30 @@ class SingleVideoPlayerWidget(QWidget):
         self.play_button = self.ui.playButton
         self.play_button.clicked.connect(self.play)
 
+        # 创建播放器对象
         self.videoPlayer = VideoPlayer()
+        # 创建播放器线程
         self.videoPlayer_thread = QThread()
         self.begin.connect(self.videoPlayer.playVideo)
         self.videoPlayer.moveToThread(self.videoPlayer_thread)
+        # 启动播放器线程
         self.videoPlayer_thread.start()
 
+        # 连接信号槽
         self.videoPlayer.update_progress_bar.connect(lambda value: self.set_progress(value, self.slide_bar))
 
-
+    @Slot()
     def show_player_setting_dialog(self):
         self.player_setting_dialog = PlayerSettingDialog()
         self.player_setting_dialog.show()
         self.player_setting_dialog.settings.connect(lambda detectType, model_list, video_path: self.videoPlayer.set_player(detectType, model_list, video_path))
     
-
+    @Slot()
     def set_frame(self):
-        self.videoPlayer.set_play_status(True)
         self.videoPlayer.set_frame(self.slide_bar.value())
         self.begin.emit()
 
+    @Slot()
     def play(self):
         play_status = self.videoPlayer.get_play_status()
         play_is_setting_done = self.videoPlayer.get_setting_status()
@@ -68,13 +71,16 @@ class SingleVideoPlayerWidget(QWidget):
             self.videoPlayer.set_play_status(False)
             self.play_button.setText('播放')
 
+    @Slot()
     def stop_play(self):
         self.videoPlayer.set_play_status(False)
 
+    @Slot(int, QProgressBar)
     @staticmethod
     def set_progress(value, slide_bar):
         slide_bar.setValue(value)
 
+    @Slot(np.ndarray, QLabel)
     @staticmethod
     def show_image(img_src, label):
         image = QImage(img_src, img_src.shape[1], img_src.shape[0], QImage.Format_BGR888)

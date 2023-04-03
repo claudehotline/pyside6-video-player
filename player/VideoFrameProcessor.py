@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal, Slot
 import numpy as np
 import time
 import cv2
@@ -17,12 +17,10 @@ class VideoFrameProcessor(QObject):
         super().__init__()
 
         self.detecting = False
+        self.is_decoding_finished = False
         self.detectType = detectType
         self.model_list = model_list
         self.set_detector(self.detectType, self.model_list)
-
-        self.is_decoding_finished = False
-
         self.current_frame = 0
 
     def set_detector(self, detectType, model_list):
@@ -38,6 +36,7 @@ class VideoFrameProcessor(QObject):
             self.detector = PoseDetect(model_path1, model_path2)
         self.detecting = True
 
+    @Slot(int)
     def set_current_frame(self, current_frame):
         self.current_frame = current_frame
     
@@ -60,8 +59,7 @@ class VideoFrameProcessor(QObject):
     def set_is_finished(self, status):
         self.is_decoding_finished = status
 
-    
-
+    @Slot()
     def run(self):
         start_time = time.time()
         frame_count = 0

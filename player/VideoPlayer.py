@@ -1,5 +1,5 @@
 import cv2
-from PySide6.QtCore import QObject, Signal, QThread
+from PySide6.QtCore import QObject, Signal, QThread, Slot
 import numpy as np
 from .VideoFrameProcessor import VideoFrameProcessor
 from .OpencvVideoDecoder import OpencvVideoDecoder
@@ -11,7 +11,6 @@ class VideoPlayer(QObject):
     finished = Signal()
     progress_slider = Signal(int)
     image = Signal(np.ndarray)
-    result = Signal(np.ndarray)
     set_frame_num = Signal(int)
     start_detect = Signal()
     start_decode = Signal()
@@ -29,6 +28,7 @@ class VideoPlayer(QObject):
         self.videoFrameReaderThread = QThread()
         self.videoFrameProcessorThread = QThread()
 
+    @Slot(str, list, str)
     def set_player(self, detectType, model_list, video_path):
         self.detectType = detectType
         self.model_list = model_list
@@ -46,41 +46,61 @@ class VideoPlayer(QObject):
         self.is_setting_done = True
 
     def set_videoFrameReader(self, video_path):
+        # 创建视频解码器
         self.videoFrameReader = self.get_video_decoder(video_path)
         self.videoFrameReader.set_frame_buffer(self.frameBuffer)
+        # 设置解码器的信号槽
         self.videoFrameReaderThread.started.connect(self.videoFrameReader.run)
         self.start_decode.connect(self.videoFrameReader.run)
+        # 设置解码器线程
         self.videoFrameReader.moveToThread(self.videoFrameReaderThread)
+        # 设置解码器解码状态
         self.videoFrameReader.set_decoding_status(True)
 
     def set_videoFrameDetector(self, detectType, model_list):
+        # 创建视频检测器
         self.videoFrameProcessor = VideoFrameProcessor(detectType, model_list)
         self.videoFrameProcessor.set_frame_buffer(self.frameBuffer)
+        # 设置检测器的信号槽
         self.videoFrameProcessorThread.started.connect(self.videoFrameProcessor.run)
         self.start_detect.connect(self.videoFrameProcessor.run)
         self.videoFrameProcessor.update_progress.connect(lambda x: self.update_progress(x))
         self.set_frame_num.connect(lambda x:self.videoFrameProcessor.set_frame_num(x))
         self.videoFrameReader.decoding_finished.connect(self.send_decoding_finished_to_process)
+        # 设置检测器线程
         self.videoFrameProcessor.moveToThread(self.videoFrameProcessorThread)
 
     def set_frame(self, frame):
+        '''
+        设置视频播放的帧数
+        '''
+
+        # 解码器停止解码，清空缓冲区，检测器停止检测
         self.videoFrameReader.set_decoding_status(False)
         self.frameBuffer.clear_buffer()
         self.videoFrameProcessor.set_detecting_status(False)
+        # 根据进度条进度设置解码器和检测器的当前帧数
         self.videoFrameReader.set_frame(int(self.videoFrameReader.get_video_total_frames() * frame / 100))
         self.videoFrameProcessor.set_current_frame(int(self.videoFrameReader.get_video_total_frames() * frame / 100))
+        # 设置解码器和检测器的运行状态
         self.videoFrameReader.set_decoding_status(True)
         self.videoFrameProcessor.set_detecting_status(True)
+        # 设置解码状态为未完成
         self.videoFrameProcessor.set_is_finished(False)
         self.start_decode.emit()
         self.start_detect.emit()
         self.play = True
 
+    @Slot()
     def update_progress(self, frame_num):
         self.progress = int(frame_num / self.videoFrameReader.get_video_total_frames() * 100)
         self.update_progress_bar.emit(self.progress)
 
     def set_play_status(self, status):
+        '''
+            设置播放状态的播放和暂停状态
+        '''
+        
         if status == False:
             self.videoFrameProcessor.set_detecting_status(False)
             self.play = status
@@ -108,9 +128,11 @@ class VideoPlayer(QObject):
             video_decoder.set_video_path(video_path)
             return video_decoder
 
+    @Slot()
     def send_decoding_finished_to_process(self):
         self.videoFrameProcessor.decoding_finished()
 
+    @Slot()
     def playVideo(self):
         print('playing')
         self.videoFrameProcessorThread.start()
