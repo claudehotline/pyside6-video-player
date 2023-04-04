@@ -27,20 +27,20 @@ class MainWindow(QMainWindow):
     self.menuBar = self.ui.menubar
     # 获取setting菜单项
     self.setting = self.menuBar.findChild(QMenu, "setting")
+    self.action1x1 = None
     self.action2x2 = None
     self.action4x4 = None
-    self.action8x8 = None
     for action in self.setting.actions():
-        if action.text() == "2x2":
+        if action.text() == "1x1":
+            self.action1x1 = action
+        elif action.text() == "2x2":
             self.action2x2 = action
         elif action.text() == "4x4":
             self.action4x4 = action
-        elif action.text() == "8x8":
-            self.action8x8 = action
     # 绑定事件
+    self.action1x1.triggered.connect(self.grid_change_1x1)
     self.action2x2.triggered.connect(self.grid_change_2x2)
     self.action4x4.triggered.connect(self.grid_change_4x4)
-    self.action8x8.triggered.connect(self.grid_change_8x8)
 
     # # 设置窗口标题
     self.setWindowTitle("视频分析软件")
@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
     self.animation.start()
 
 
-  def grid_change_2x2(self):
+  def grid_change_1x1(self):
     for i in range(self.row * self.col):
       self.grid.removeWidget(self.videoPlayerWidgetList[i])
       if self.videoPlayerWidgetList[i].videoPlayer != None:
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
       self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
       self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
-  def grid_change_4x4(self):
+  def grid_change_2x2(self):
     for i in range(self.row * self.col):
         self.grid.removeWidget(self.videoPlayerWidgetList[i])
         if self.videoPlayerWidgetList[i].videoPlayer != None:
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
         self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
         self.videoPlayerWidgetList.append(self.videoPlayerWidget)
   
-  def grid_change_8x8(self):
+  def grid_change_4x4(self):
       for i in range(self.row * self.col):
           self.grid.removeWidget(self.videoPlayerWidgetList[i])
           if self.videoPlayerWidgetList[i].videoPlayer != None:
@@ -137,9 +137,6 @@ class MainWindow(QMainWindow):
           self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
   def closeEvent(self, event):
-      # for w in self.videoPlayerWidgetList:
-      #     if w.videoPlayer != None:
-      #         w.release()
     event.accept()
     os._exit(0)
 

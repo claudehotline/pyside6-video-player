@@ -266,7 +266,7 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QGridLayout" name="gridLayout">
@@ -319,7 +319,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="file">
@@ -332,9 +332,9 @@
     <property name="title">
      <string>配置</string>
     </property>
+    <addaction name="action1x1"/>
     <addaction name="action2x2"/>
     <addaction name="action4x4"/>
-    <addaction name="action8x8"/>
    </widget>
    <addaction name="file"/>
    <addaction name="setting"/>
@@ -342,7 +342,12 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="close">
    <property name="text">
-    <string>guanbi </string>
+    <string>关闭</string>
+   </property>
+  </action>
+  <action name="action1x1">
+   <property name="text">
+    <string>1x1</string>
    </property>
   </action>
   <action name="action2x2">
@@ -353,11 +358,6 @@
   <action name="action4x4">
    <property name="text">
     <string>4x4</string>
-   </property>
-  </action>
-  <action name="action8x8">
-   <property name="text">
-    <string>8x8</string>
    </property>
   </action>
  </widget>
