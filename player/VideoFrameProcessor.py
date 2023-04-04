@@ -65,6 +65,7 @@ class VideoFrameProcessor(QObject):
         frame_count = 0
         fps=0
         while self.detecting:
+            start_detect_time = time.time()
             # 如果帧缓冲区中有帧，则取出一帧进行处理
             frame = self.frame_buffer.get_frame()
             print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
@@ -84,3 +85,8 @@ class VideoFrameProcessor(QObject):
             if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
                 print('视频处理结束')
                 self.detecting = False
+            detect_end_time = time.time()
+            detect_time = detect_end_time - start_detect_time
+            # 控制帧率
+            if detect_time < 0.03:
+                time.sleep(0.03 - detect_time)
