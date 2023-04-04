@@ -1,9 +1,11 @@
-from PySide6.QtWidgets import QMainWindow, QApplication, QMenu
+from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
 import sys
 import os
 from ui.grid_main import Ui_MainWindow
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve
+
+from widgets.VsrAnalysisWidget import VsrAnalysisWidget
 
 class MainWindow(QMainWindow):
     
@@ -13,12 +15,19 @@ class MainWindow(QMainWindow):
     self.ui = Ui_MainWindow()
     self.ui.setupUi(self)
 
+    self.stack_widget = self.ui.stackedWidget
+    self.stack_widget.setContentsMargins(0, 0, 0, 0)
+
+    # page1 为视频播放页面
     self.grid = self.ui.gridLayout
+    self.grid.setContentsMargins(0, 0, 0, 0)
+    self.grid.setSpacing(1)
     self.row = 2
     self.col = 2
     self.videoPlayerWidgetList = []
     for i in range(self.row * self.col):
       self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+      self.videoPlayerWidget.setContentsMargins(0, 0, 0, 0)
       self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
       self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
@@ -56,6 +65,16 @@ class MainWindow(QMainWindow):
     self.test1_btn.clicked.connect(self.menuButtonClick)
     self.test2_btn = self.ui.test2_btn
     self.test2_btn.clicked.connect(self.menuButtonClick)
+
+    # 获取stackedWidget的page_2
+    self.vsr_page = self.ui.page_2
+    # 创建一个水平布局
+    self.horizontalLayout = QHBoxLayout(self.vsr_page)
+    self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+    vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
+    self.horizontalLayout.addWidget(vsrAnalysisWidget)
+    # self.vsr_page.setLayout(self.horizontalLayout)
+    
 
 
   def menuButtonClick(self):
@@ -137,9 +156,6 @@ class MainWindow(QMainWindow):
           self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
   def closeEvent(self, event):
-      # for w in self.videoPlayerWidgetList:
-      #     if w.videoPlayer != None:
-      #         w.release()
     event.accept()
     os._exit(0)
 

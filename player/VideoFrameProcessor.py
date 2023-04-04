@@ -65,9 +65,10 @@ class VideoFrameProcessor(QObject):
         frame_count = 0
         fps=0
         while self.detecting:
+            start_detect_time = time.time()
             # 如果帧缓冲区中有帧，则取出一帧进行处理
             frame = self.frame_buffer.get_frame()
-            print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
+            # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
                 result = self.detector.detect(frame)
                 self.current_frame = self.current_frame + 1
@@ -75,7 +76,7 @@ class VideoFrameProcessor(QObject):
                 end_time = time.time()
                 frame_count += 1
                 if end_time - start_time > 1:
-                    fps = frame_count / (end_time - start_time)              
+                    fps = round(frame_count / (end_time - start_time), 0)         
                     start_time = time.time()
                     frame_count = 0
                 cv2.putText(result, "FPS: {:.2f}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
@@ -84,3 +85,8 @@ class VideoFrameProcessor(QObject):
             if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
                 print('视频处理结束')
                 self.detecting = False
+            end_detect_time = time.time()
+            detect_time=end_detect_time-start_detect_time
+            # 使用time.sleep 控制帧速为25帧/s   1/25=0.04s
+            if detect_time < 0.033:
+                time.sleep(0.033 - detect_time)

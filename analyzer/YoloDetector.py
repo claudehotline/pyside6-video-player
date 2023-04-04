@@ -1,25 +1,11 @@
-
-import sys
-import os
-# sys.path.append('E:/Projects/deeplearning/mmlab/mmdeploy/build/bin/Release')
-sys.path.append('I:/mmdeploy/build/bin/Release')
-# os.add_dll_directory(
-#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/bin')
-# os.add_dll_directory(
-#     'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.7/lib/x64')
-# os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
-# os.add_dll_directory('H:/opencv/build/x64/vc16/bin')
-os.add_dll_directory('D:/opencv/build/x64/vc16/bin')
-os.add_dll_directory('D:/onnxruntime-win-x64-1.8.1/lib')
-
 import cv2
 from mmdeploy_python import Detector
+from analyzer import device
 
 class YoloDetector():
 
     def __init__(self, model_path):
-        # self.detector = Detector(model_path, 'cuda', 0)
-        self.detector = Detector(model_path, 'cpu', 0)
+        self.detector = Detector(model_path, device, 0)
 
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)

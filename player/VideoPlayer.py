@@ -1,4 +1,3 @@
-import cv2
 from PySide6.QtCore import QObject, Signal, QThread, Slot
 import numpy as np
 from .VideoFrameProcessor import VideoFrameProcessor

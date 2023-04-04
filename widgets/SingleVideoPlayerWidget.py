@@ -85,6 +85,8 @@ class SingleVideoPlayerWidget(QWidget):
     def show_image(img_src, label):
         image = QImage(img_src, img_src.shape[1], img_src.shape[0], QImage.Format_BGR888)
         image = image.scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # image 在label上居中显示
+        label.setAlignment(Qt.AlignCenter)
         label.setPixmap(QPixmap.fromImage(image))
 
     def release(self):

@@ -48,5 +48,7 @@ class OpencvVideoDecoder(QObject):
       if not ret:
         break
       self.frame_buffer.add_frame(frame)
+      
+      # cv2.waitKey(int(1000 / 40))
     print('decoder stop')
     self.decoding_finished.emit()
