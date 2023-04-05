@@ -25,7 +25,9 @@ class VsrAnalyzer(QObject):
         self.image = image
 
     def run(self):
+        print('run')
         result = self.analyzer.detect(self.image)
+        cv2.imshow('result333', result)
         self.result_image.emit(result)
 
 class VsrAnalysisWidget(QWidget):
@@ -75,6 +77,8 @@ class VsrAnalysisWidget(QWidget):
     @Slot(np.ndarray, QLabel)
     @staticmethod
     def set_label_image(image, label):
+        print('set_label_image')
+        cv2.imshow('result666', image)
         image = QImage(image, image.shape[1], image.shape[0], QImage.Format_BGR888)
         image = image.scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         label.setPixmap(QPixmap.fromImage(image))

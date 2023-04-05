@@ -15,9 +15,6 @@ class MainWindow(QMainWindow):
     self.ui = Ui_MainWindow()
     self.ui.setupUi(self)
 
-    self.stack_widget = self.ui.stackedWidget
-    self.stack_widget.setContentsMargins(0, 0, 0, 0)
-
     # page1 为视频播放页面
     self.grid = self.ui.gridLayout
     self.grid.setContentsMargins(0, 0, 0, 0)
@@ -75,6 +72,14 @@ class MainWindow(QMainWindow):
     self.horizontalLayout.addWidget(vsrAnalysisWidget)
     # self.vsr_page.setLayout(self.horizontalLayout)
     
+    # self.frame2 = self.ui.frame2
+    # self.frame2.setContentsMargins(0, 0, 0, 0)
+    
+    self.stack_widget = self.ui.stackedWidget
+    self.stack_widget.setContentsMargins(0, 0, 0, 0)
+    self.stack_widget.geometry().setX(0)
+    self.stack_widget.geometry().setY(0)
+    self.stack_widget.move(0, 0)
 
 
   def menuButtonClick(self):

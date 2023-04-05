@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1204, 863)
         self.close = QAction(MainWindow)
         self.close.setObjectName(u"close")
         self.action1x1 = QAction(MainWindow)
@@ -49,6 +49,7 @@ class Ui_MainWindow(object):
         self.frame.setSizePolicy(sizePolicy)
         self.frame.setMinimumSize(QSize(60, 0))
         self.frame.setMaximumSize(QSize(60, 16777215))
+        self.frame.setStyleSheet(u"background-color: rgb(61, 63, 91);")
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame)
@@ -71,7 +72,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.togglebtn.sizePolicy().hasHeightForWidth())
         self.togglebtn.setSizePolicy(sizePolicy1)
-        self.togglebtn.setMinimumSize(QSize(0, 45))
+        self.togglebtn.setMinimumSize(QSize(60, 45))
 
         self.verticalLayout_2.addWidget(self.togglebtn)
 
@@ -89,19 +90,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.home_btn = QPushButton(self.top_menu)
         self.home_btn.setObjectName(u"home_btn")
-        self.home_btn.setMinimumSize(QSize(0, 45))
+        self.home_btn.setMinimumSize(QSize(60, 45))
 
         self.verticalLayout_3.addWidget(self.home_btn)
 
         self.test1_btn = QPushButton(self.top_menu)
         self.test1_btn.setObjectName(u"test1_btn")
-        self.test1_btn.setMinimumSize(QSize(0, 45))
+        self.test1_btn.setMinimumSize(QSize(60, 45))
 
         self.verticalLayout_3.addWidget(self.test1_btn)
 
         self.test2_btn = QPushButton(self.top_menu)
         self.test2_btn.setObjectName(u"test2_btn")
-        self.test2_btn.setMinimumSize(QSize(0, 45))
+        self.test2_btn.setMinimumSize(QSize(60, 45))
 
         self.verticalLayout_3.addWidget(self.test2_btn)
 
@@ -118,7 +119,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.pushButton_5 = QPushButton(self.frame_3)
         self.pushButton_5.setObjectName(u"pushButton_5")
-        self.pushButton_5.setMinimumSize(QSize(0, 45))
+        self.pushButton_5.setMinimumSize(QSize(60, 45))
 
         self.verticalLayout_4.addWidget(self.pushButton_5)
 
@@ -138,6 +139,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.stackedWidget = QStackedWidget(self.frame2)
         self.stackedWidget.setObjectName(u"stackedWidget")
+        self.stackedWidget.setLineWidth(0)
         self.page = QWidget()
         self.page.setObjectName(u"page")
         self.gridLayout = QGridLayout(self.page)
@@ -147,10 +149,10 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
-        self.gridLayout_2 = QGridLayout(self.page_2)
-        self.gridLayout_2.setSpacing(0)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2 = QHBoxLayout(self.page_2)
+        self.horizontalLayout_2.setSpacing(0)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.stackedWidget.addWidget(self.page_2)
 
         self.verticalLayout_5.addWidget(self.stackedWidget)
@@ -161,7 +163,8 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1204, 22))
+        self.menubar.setStyleSheet(u"background-color: rgb(61, 63, 91);")
         self.file = QMenu(self.menubar)
         self.file.setObjectName(u"file")
         self.setting = QMenu(self.menubar)
@@ -169,6 +172,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
+        self.statusbar.setStyleSheet(u"background-color: rgb(61, 63, 91);")
         MainWindow.setStatusBar(self.statusbar)
 
         self.menubar.addAction(self.file.menuAction())
