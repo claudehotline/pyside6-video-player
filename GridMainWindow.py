@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout
+from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
 import sys
 import os
@@ -66,8 +66,9 @@ class MainWindow(QMainWindow):
     # 获取stackedWidget的page_2
     self.vsr_page = self.ui.page_2
     # 创建一个水平布局
-    self.horizontalLayout = QHBoxLayout(self.vsr_page)
+    self.horizontalLayout = self.ui.horizontalLayout_2
     self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+    self.horizontalLayout.setSpacing(1)
     vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
     self.horizontalLayout.addWidget(vsrAnalysisWidget)
     # self.vsr_page.setLayout(self.horizontalLayout)
@@ -77,9 +78,12 @@ class MainWindow(QMainWindow):
     
     self.stack_widget = self.ui.stackedWidget
     self.stack_widget.setContentsMargins(0, 0, 0, 0)
-    self.stack_widget.geometry().setX(0)
-    self.stack_widget.geometry().setY(0)
-    self.stack_widget.move(0, 0)
+
+  def resizeEvent(self, event):
+    # 获取vsr_page 中label的控件
+    self.label = self.vsr_page.findChild(QLabel, "label")
+    print(self.label.geometry())
+
 
 
   def menuButtonClick(self):

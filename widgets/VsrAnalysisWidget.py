@@ -27,7 +27,6 @@ class VsrAnalyzer(QObject):
     def run(self):
         print('run')
         result = self.analyzer.detect(self.image)
-        cv2.imshow('result333', result)
         self.result_image.emit(result)
 
 class VsrAnalysisWidget(QWidget):
@@ -45,7 +44,7 @@ class VsrAnalysisWidget(QWidget):
         self.org_pic_label = self.ui.label
         self.result_pic_label = self.ui.label_2
 
-        self.pic_select_btn.clicked.connect(self.open_video_dialog)
+        self.pic_select_btn.clicked.connect(self.open_pic_dialog)
         self.file_dialog = QFileDialog()
 
         self.analyzer = VsrAnalyzer('model/vsr/esrgan')
@@ -57,7 +56,7 @@ class VsrAnalysisWidget(QWidget):
         
 
     @Slot()
-    def open_video_dialog(self):
+    def open_pic_dialog(self):
         self.pic_path, _ = self.file_dialog.getOpenFileName(
             self,
             '选择图像文件',
@@ -69,6 +68,7 @@ class VsrAnalysisWidget(QWidget):
         image = QImage(self.image_src, self.image_src.shape[1], self.image_src.shape[0], QImage.Format_BGR888)
         image = image.scaled(self.org_pic_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.org_pic_label.setPixmap(QPixmap.fromImage(image))
+        self.org_pic_label.setScaledContents(True)
 
         self.analyzer.set_image(self.image_src)
         self.start_analysis.emit()
@@ -78,17 +78,18 @@ class VsrAnalysisWidget(QWidget):
     @staticmethod
     def set_label_image(image, label):
         print('set_label_image')
-        cv2.imshow('result666', image)
         image = QImage(image, image.shape[1], image.shape[0], QImage.Format_BGR888)
         image = image.scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         label.setPixmap(QPixmap.fromImage(image))
+        label.setScaledContents(True)
+        
 
     def closeEvent(self, event):
         event.accept()
         os._exit(0)
 
-if __name__ == "__main__":
-    app = QApplication([])
-    window = VsrAnalysisWidget()
-    window.show()
-    sys.exit(app.exec())
+# if __name__ == "__main__":
+#     app = QApplication([])
+#     window = VsrAnalysisWidget()
+#     window.show()
+#     sys.exit(app.exec())

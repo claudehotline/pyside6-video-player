@@ -11,6 +11,6 @@ class EsrganAnalyzer:
     result = self.detector(frame)
     # convert to BGR
     # result = result[..., ::-1]
-    cv2.imshow('result', result)
+    # cv2.imshow('result', result)
 
     return result  

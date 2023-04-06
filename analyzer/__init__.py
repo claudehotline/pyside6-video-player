@@ -1,5 +1,9 @@
 import os
 import torch
+import sys
+
+# import torch.hub
+# torch.hub.set_dir('/path/to/new_cache/torch/hub')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 if torch.cuda.is_available():
@@ -10,5 +14,6 @@ if torch.cuda.is_available():
   os.add_dll_directory('E:/Projects/deeplearning/mmlab/TensorRT-8.5.3.1/lib')
   os.add_dll_directory('H:/opencv/build/x64/vc16/bin')
 else:
+  sys.path.append('I:/mmdeploy/build/bin/Release')
   os.add_dll_directory('D:/opencv/build/x64/vc16/bin')
   os.add_dll_directory('D:/onnxruntime-win-x64-1.8.1/lib')

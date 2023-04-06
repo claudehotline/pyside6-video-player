@@ -70,6 +70,7 @@ class VideoFrameProcessor(QObject):
             frame = self.frame_buffer.get_frame()
             # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
+                cv2.imwrite('test.jpg', frame)
                 result = self.detector.detect(frame)
                 self.current_frame = self.current_frame + 1
                 self.update_progress.emit(self.current_frame)
@@ -87,6 +88,7 @@ class VideoFrameProcessor(QObject):
                 self.detecting = False
             end_detect_time = time.time()
             detect_time=end_detect_time-start_detect_time
+            print('detect_time:', detect_time)
             # 使用time.sleep 控制帧速为25帧/s   1/25=0.04s
             if detect_time < 0.033:
                 time.sleep(0.033 - detect_time)
