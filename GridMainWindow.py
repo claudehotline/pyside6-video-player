@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
-from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
 from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 import sys
 import os
@@ -16,23 +15,23 @@ class MainWindow(QMainWindow):
     self.ui = Ui_MainWindow()
     self.ui.setupUi(self)
 
-    # page1 为视频播放页面
+    # 获取stackedWidget
+    self.stack_widget = self.ui.stackedWidget
+    self.stack_widget.setContentsMargins(0, 0, 0, 0)
+
+    # 设置 page1 为视频播放页面
     self.playerPage = self.ui.page
     self.videoPlayerTableWidget = VideoPlayerTableWidget(2, 2, self.playerPage)
     self.playerPage.setLayout(QHBoxLayout())
     self.playerPage.layout().addWidget(self.videoPlayerTableWidget)
-    # self.grid = self.ui.gridLayout
-    # self.grid.setContentsMargins(0, 0, 0, 0)
-    # self.grid.setSpacing(1)
-    # self.row = 2
-    # self.col = 2
-    # self.videoPlayerWidgetList = []
-    # for i in range(self.row * self.col):
-    #   self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-    #   self.videoPlayerWidget.setContentsMargins(0, 0, 0, 0)
-    #   self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-    #   self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
+    # 设置 page2 为图片超分辨率页面
+    self.vsr_page = self.ui.page_2
+    self.horizontalLayout = self.ui.horizontalLayout_2
+    self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+    self.horizontalLayout.setSpacing(1)
+    vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
+    self.horizontalLayout.addWidget(vsrAnalysisWidget)
 
     # 获取menuBar
     self.menuBar = self.ui.menubar
@@ -48,7 +47,7 @@ class MainWindow(QMainWindow):
             self.action2x2 = action
         elif action.text() == "4x4":
             self.action4x4 = action
-    # 绑定事件
+    # 绑定菜单项事件
     self.action1x1.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(1,1))
     self.action2x2.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(2,2))
     self.action4x4.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(4,4))
@@ -58,6 +57,7 @@ class MainWindow(QMainWindow):
     # # 设置窗口大小
     self.resize(1920, 1080)
 
+    # 获取左侧导航栏按钮
     self.expanding_btn = self.ui.togglebtn
     self.expanding_btn.clicked.connect(self.expanding_menu)
 
@@ -68,39 +68,14 @@ class MainWindow(QMainWindow):
     self.test2_btn = self.ui.test2_btn
     self.test2_btn.clicked.connect(self.menuButtonClick)
 
-    # 获取stackedWidget的page_2
-    self.vsr_page = self.ui.page_2
-    # 创建一个水平布局
-    self.horizontalLayout = self.ui.horizontalLayout_2
-    self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-    self.horizontalLayout.setSpacing(1)
-    vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
-    self.horizontalLayout.addWidget(vsrAnalysisWidget)
-    # self.vsr_page.setLayout(self.horizontalLayout)
-    
-    # self.frame2 = self.ui.frame2
-    # self.frame2.setContentsMargins(0, 0, 0, 0)
-    
-    self.stack_widget = self.ui.stackedWidget
-    self.stack_widget.setContentsMargins(0, 0, 0, 0)
-
-  def resizeEvent(self, event):
-    # 获取vsr_page 中label的控件
-    self.label = self.vsr_page.findChild(QLabel, "label")
-    print(self.label.geometry())
-
-
-
   def menuButtonClick(self):
     btn = self.sender()
     btnName = btn.objectName()
 
     if btnName == "home_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page)
-
     if btnName == "test1_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_2)
-
     print(f'Button "{btnName}" pressed!')
 
   def expanding_menu(self):
@@ -123,51 +98,10 @@ class MainWindow(QMainWindow):
     self.animation.setEasingCurve(QEasingCurve.InOutQuart)
     self.animation.start()
 
-
-  # def grid_change_1x1(self):
-  #   for i in range(self.row * self.col):
-  #     self.grid.removeWidget(self.videoPlayerWidgetList[i])
-  #     if self.videoPlayerWidgetList[i].videoPlayer != None:
-  #       self.videoPlayerWidgetList[i].release()
-  #     self.videoPlayerWidgetList[i].deleteLater()
-  #   self.videoPlayerWidgetList = []
-
-  #   self.row = 1
-  #   self.col = 1
-  #   for i in range(self.row * self.col):
-  #     self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-  #     self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-  #     self.videoPlayerWidgetList.append(self.videoPlayerWidget)
-
-  # def grid_change_2x2(self):
-  #   for i in range(self.row * self.col):
-  #       self.grid.removeWidget(self.videoPlayerWidgetList[i])
-  #       if self.videoPlayerWidgetList[i].videoPlayer != None:
-  #           self.videoPlayerWidgetList[i].release()
-  #       self.videoPlayerWidgetList[i].deleteLater()
-  #   self.videoPlayerWidgetList = []
-
-  #   self.row = 2
-  #   self.col = 2
-  #   for i in range(self.row * self.col):
-  #       self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-  #       self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-  #       self.videoPlayerWidgetList.append(self.videoPlayerWidget)
-  
-  # def grid_change_4x4(self):
-  #     for i in range(self.row * self.col):
-  #         self.grid.removeWidget(self.videoPlayerWidgetList[i])
-  #         if self.videoPlayerWidgetList[i].videoPlayer != None:
-  #             self.videoPlayerWidgetList[i].release()
-  #         self.videoPlayerWidgetList[i].deleteLater()
-  #     self.videoPlayerWidgetList = []
-
-  #     self.row = 4
-  #     self.col = 4
-  #     for i in range(self.row * self.col):
-  #         self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-  #         self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-  #         self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+  def resizeEvent(self, event):
+    # 获取vsr_page 中label的控件
+    self.label = self.vsr_page.findChild(QLabel, "label")
+    print(self.label.geometry())
 
   def closeEvent(self, event):
     event.accept()
