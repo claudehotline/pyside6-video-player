@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
+from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 import sys
 import os
 from ui.grid_main import Ui_MainWindow
@@ -16,17 +17,21 @@ class MainWindow(QMainWindow):
     self.ui.setupUi(self)
 
     # page1 为视频播放页面
-    self.grid = self.ui.gridLayout
-    self.grid.setContentsMargins(0, 0, 0, 0)
-    self.grid.setSpacing(1)
-    self.row = 2
-    self.col = 2
-    self.videoPlayerWidgetList = []
-    for i in range(self.row * self.col):
-      self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-      self.videoPlayerWidget.setContentsMargins(0, 0, 0, 0)
-      self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-      self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+    self.playerPage = self.ui.page
+    self.videoPlayerTableWidget = VideoPlayerTableWidget(2, 2, self.playerPage)
+    self.playerPage.setLayout(QHBoxLayout())
+    self.playerPage.layout().addWidget(self.videoPlayerTableWidget)
+    # self.grid = self.ui.gridLayout
+    # self.grid.setContentsMargins(0, 0, 0, 0)
+    # self.grid.setSpacing(1)
+    # self.row = 2
+    # self.col = 2
+    # self.videoPlayerWidgetList = []
+    # for i in range(self.row * self.col):
+    #   self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+    #   self.videoPlayerWidget.setContentsMargins(0, 0, 0, 0)
+    #   self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
+    #   self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
 
     # 获取menuBar
@@ -44,9 +49,9 @@ class MainWindow(QMainWindow):
         elif action.text() == "4x4":
             self.action4x4 = action
     # 绑定事件
-    self.action1x1.triggered.connect(self.grid_change_1x1)
-    self.action2x2.triggered.connect(self.grid_change_2x2)
-    self.action4x4.triggered.connect(self.grid_change_4x4)
+    self.action1x1.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(1,1))
+    self.action2x2.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(2,2))
+    self.action4x4.triggered.connect(lambda: self.videoPlayerTableWidget.change_grid_size(4,4))
 
     # # 设置窗口标题
     self.setWindowTitle("视频分析软件")
@@ -119,50 +124,50 @@ class MainWindow(QMainWindow):
     self.animation.start()
 
 
-  def grid_change_1x1(self):
-    for i in range(self.row * self.col):
-      self.grid.removeWidget(self.videoPlayerWidgetList[i])
-      if self.videoPlayerWidgetList[i].videoPlayer != None:
-        self.videoPlayerWidgetList[i].release()
-      self.videoPlayerWidgetList[i].deleteLater()
-    self.videoPlayerWidgetList = []
+  # def grid_change_1x1(self):
+  #   for i in range(self.row * self.col):
+  #     self.grid.removeWidget(self.videoPlayerWidgetList[i])
+  #     if self.videoPlayerWidgetList[i].videoPlayer != None:
+  #       self.videoPlayerWidgetList[i].release()
+  #     self.videoPlayerWidgetList[i].deleteLater()
+  #   self.videoPlayerWidgetList = []
 
-    self.row = 1
-    self.col = 1
-    for i in range(self.row * self.col):
-      self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-      self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-      self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+  #   self.row = 1
+  #   self.col = 1
+  #   for i in range(self.row * self.col):
+  #     self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+  #     self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
+  #     self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
-  def grid_change_2x2(self):
-    for i in range(self.row * self.col):
-        self.grid.removeWidget(self.videoPlayerWidgetList[i])
-        if self.videoPlayerWidgetList[i].videoPlayer != None:
-            self.videoPlayerWidgetList[i].release()
-        self.videoPlayerWidgetList[i].deleteLater()
-    self.videoPlayerWidgetList = []
+  # def grid_change_2x2(self):
+  #   for i in range(self.row * self.col):
+  #       self.grid.removeWidget(self.videoPlayerWidgetList[i])
+  #       if self.videoPlayerWidgetList[i].videoPlayer != None:
+  #           self.videoPlayerWidgetList[i].release()
+  #       self.videoPlayerWidgetList[i].deleteLater()
+  #   self.videoPlayerWidgetList = []
 
-    self.row = 2
-    self.col = 2
-    for i in range(self.row * self.col):
-        self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-        self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-        self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+  #   self.row = 2
+  #   self.col = 2
+  #   for i in range(self.row * self.col):
+  #       self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+  #       self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
+  #       self.videoPlayerWidgetList.append(self.videoPlayerWidget)
   
-  def grid_change_4x4(self):
-      for i in range(self.row * self.col):
-          self.grid.removeWidget(self.videoPlayerWidgetList[i])
-          if self.videoPlayerWidgetList[i].videoPlayer != None:
-              self.videoPlayerWidgetList[i].release()
-          self.videoPlayerWidgetList[i].deleteLater()
-      self.videoPlayerWidgetList = []
+  # def grid_change_4x4(self):
+  #     for i in range(self.row * self.col):
+  #         self.grid.removeWidget(self.videoPlayerWidgetList[i])
+  #         if self.videoPlayerWidgetList[i].videoPlayer != None:
+  #             self.videoPlayerWidgetList[i].release()
+  #         self.videoPlayerWidgetList[i].deleteLater()
+  #     self.videoPlayerWidgetList = []
 
-      self.row = 4
-      self.col = 4
-      for i in range(self.row * self.col):
-          self.videoPlayerWidget = SingleVideoPlayerWidget(self)
-          self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
-          self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+  #     self.row = 4
+  #     self.col = 4
+  #     for i in range(self.row * self.col):
+  #         self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+  #         self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
+  #         self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 
   def closeEvent(self, event):
     event.accept()

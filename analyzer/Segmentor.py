@@ -1,4 +1,4 @@
-from mmdeploy_python import Segmentor
+# from mmdeploy_python import Segmentor
 import numpy as np
 # from analyzer import device
 
@@ -12,11 +12,13 @@ class Segment():
         # self.seg_detector = Segmentor(model_path, device, 0)
 
         self.deploy_cfg = 'I:/mmdeploy/configs/mmseg/segmentation_onnxruntime_dynamic.py'    
-        # self.model_cfg = 'I:/pyside6/pyside6-video-player/pspnet_r18b-d8_4xb2-80k_cityscapes-512x1024.py'
-        self.model_cfg = 'I:/mmsegmentation/configs/vit/vit_deit-b16_mln_upernet_8xb2-160k_ade20k-512x512.py'
+        self.model_cfg = 'I:/pyside6/pyside6-video-player/pspnet_r18b-d8_4xb2-80k_cityscapes-512x1024.py'
+        # self.model_cfg = 'I:/mmsegmentation/configs/unet/unet_s5-d16_deeplabv3_4xb4-40k_chase-db1-128x128.py'
+        # self.model_cfg = 'I:/mmsegmentation/configs/vit/vit_deit-b16_mln_upernet_8xb2-160k_ade20k-512x512.py'
         self.device = 'cpu'
-        # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/pspnet/end2end.onnx']
-        self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/vit/end2end.onnx']
+        self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/pspnet/end2end.onnx']
+        # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/vit/end2end.onnx']
+        # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/unet/end2end.onnx']
 
 
         # read deploy_cfg and model_cfg
@@ -47,8 +49,8 @@ class Segment():
         color_seg = np.zeros((seg.shape[0], seg.shape[1], 3), dtype=np.uint8)
 
         for label, color in enumerate(palette):
-            if label == 12:
-                color_seg[seg == label, :] = (0, 255, 0)
+            # if label == 11:
+            color_seg[seg == label, :] = color
         # convert to BGR
         color_seg = color_seg[..., ::-1]
 
