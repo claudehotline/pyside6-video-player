@@ -68,6 +68,10 @@ class MainWindow(QMainWindow):
     self.test2_btn = self.ui.test2_btn
     self.test2_btn.clicked.connect(self.menuButtonClick)
 
+    # 获取底部扩展按钮
+    self.expand_btn = self.ui.bottomExpbtn
+    self.expand_btn.clicked.connect(self.bottom_expand_btn_click)
+
   def menuButtonClick(self):
     btn = self.sender()
     btnName = btn.objectName()
@@ -92,6 +96,26 @@ class MainWindow(QMainWindow):
     
     # 设置动画
     self.animation = QPropertyAnimation(self.ui.frame, b"minimumWidth")
+    self.animation.setDuration(400)
+    self.animation.setStartValue(width)
+    self.animation.setEndValue(widthExtended)
+    self.animation.setEasingCurve(QEasingCurve.InOutQuart)
+    self.animation.start()
+
+  def bottom_expand_btn_click(self):
+    print('bottom_expand_btn_click')
+    width = self.ui.expand.width()
+    print('width: ', width)
+    maxExtend = 200
+    standard = 0
+
+    if width == 0:
+        widthExtended = maxExtend
+    else:
+        widthExtended = standard
+    
+    # 设置动画
+    self.animation = QPropertyAnimation(self.ui.expand, b"minimumWidth")
     self.animation.setDuration(400)
     self.animation.setStartValue(width)
     self.animation.setEndValue(widthExtended)
