@@ -1,15 +1,12 @@
 from PySide6.QtCore import Qt, Signal, QThread, Slot, QObject
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QWidget, QProgressBar, QLabel, QFileDialog, QApplication
+from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from ui.vsr_widget import Ui_Form
 
-from player.VideoPlayer import VideoPlayer
-from widgets.PlayerSettingDialog import PlayerSettingDialog
 from analyzer.EsrganAnalyzer import EsrganAnalyzer
 
 import numpy as np
 import cv2
-import sys
 import os
 
 class VsrAnalyzer(QObject):
@@ -26,6 +23,11 @@ class VsrAnalyzer(QObject):
 
     def run(self):
         print('run')
+        aspect_ratio = self.image.shape[1] / self.image.shape[0]
+        if aspect_ratio >= 1:
+            self.image = cv2.resize(self.image, (512, int(512 / aspect_ratio)))
+        else:
+            self.image = cv2.resize(self.image, (int(512 * aspect_ratio), 512))
         result = self.analyzer.detect(self.image)
         self.result_image.emit(result)
 
