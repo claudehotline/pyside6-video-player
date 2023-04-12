@@ -321,7 +321,7 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item>
+          <item alignment="Qt::AlignTop">
            <widget class="QLabel" name="label">
             <property name="text">
              <string>123123</string>

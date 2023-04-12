@@ -35,6 +35,7 @@ class VideoFrameProcessor(QObject):
             model_path2 = 'model/pose' + os.path.sep + model_list[1]
             self.detector = PoseDetect(model_path1, model_path2)
         self.detecting = True
+        print(self.detector)
 
     @Slot(int)
     def set_current_frame(self, current_frame):

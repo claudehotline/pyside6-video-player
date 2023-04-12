@@ -17,7 +17,7 @@ class PoseDetect():
         bboxes = bboxes[keep, :4]
         result = self.pose_detector(frame, bboxes)
         # draw result
-        frame = self.visualize(frame, result, 0.5, 1280)
+        frame = self.visualize(frame, result, 0.1, 1280)
 
         return frame  
 
