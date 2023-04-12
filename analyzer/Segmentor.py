@@ -1,6 +1,6 @@
-# from mmdeploy_python import Segmentor
+from mmdeploy_python import Segmentor
 import numpy as np
-# from analyzer import device
+from analyzer import device
 
 from mmdeploy.apis.utils import build_task_processor
 from mmdeploy.utils import get_input_shape, load_config
@@ -9,36 +9,36 @@ import torch
 class Segment():
 
     def __init__(self, model_path):
-        # self.seg_detector = Segmentor(model_path, device, 0)
+        self.seg_detector = Segmentor(model_path, device, 0)
 
-        self.deploy_cfg = 'I:/mmdeploy/configs/mmseg/segmentation_onnxruntime_dynamic.py'    
-        self.model_cfg = 'I:/pyside6/pyside6-video-player/pspnet_r18b-d8_4xb2-80k_cityscapes-512x1024.py'
+        # self.deploy_cfg = 'I:/mmdeploy/configs/mmseg/segmentation_onnxruntime_dynamic.py'    
+        # self.model_cfg = 'I:/pyside6/pyside6-video-player/pspnet_r18b-d8_4xb2-80k_cityscapes-512x1024.py'
         # self.model_cfg = 'I:/mmsegmentation/configs/unet/unet_s5-d16_deeplabv3_4xb4-40k_chase-db1-128x128.py'
         # self.model_cfg = 'I:/mmsegmentation/configs/vit/vit_deit-b16_mln_upernet_8xb2-160k_ade20k-512x512.py'
-        self.device = 'cpu'
-        self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/pspnet/end2end.onnx']
+        # self.device = 'cpu'
+        # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/pspnet/end2end.onnx']
         # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/vit/end2end.onnx']
         # self.backend_model = ['I:/pyside6/pyside6-video-player/model/seg/unet/end2end.onnx']
 
 
         # read deploy_cfg and model_cfg
-        self.deploy_cfg, self.model_cfg = load_config(self.deploy_cfg, self.model_cfg)
+        # self.deploy_cfg, self.model_cfg = load_config(self.deploy_cfg, self.model_cfg)
 
         # build task and backend model
-        self.task_processor = build_task_processor(self.model_cfg, self.deploy_cfg, self.device)
-        self.model = self.task_processor.build_backend_model(self.backend_model)
+        # self.task_processor = build_task_processor(self.model_cfg, self.deploy_cfg, self.device)
+        # self.model = self.task_processor.build_backend_model(self.backend_model)
     
     def detect(self, frame):
         # process input image
-        input_shape = get_input_shape(self.deploy_cfg)
-        self.model_inputs, _ = self.task_processor.create_input(frame, input_shape)
-        # seg = self.seg_detector(frame)
+        # input_shape = get_input_shape(self.deploy_cfg)
+        # self.model_inputs, _ = self.task_processor.create_input(frame, input_shape)
+        seg = self.seg_detector(frame)
 
-        with torch.no_grad():
-            result = self.model.test_step(self.model_inputs)
+        # with torch.no_grad():
+        #     result = self.model.test_step(self.model_inputs)
 
-        image = result[0].pred_sem_seg.data.cpu().numpy()
-        seg = np.squeeze(image, axis=0)
+        # image = result[0].pred_sem_seg.data.cpu().numpy()
+        # seg = np.squeeze(image, axis=0)
 
         if seg.dtype == np.float32:
             seg = np.argmax(seg, axis=0)
