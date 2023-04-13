@@ -33,3 +33,8 @@ class VideoPlayerTableWidget(QWidget):
         self.videoPlayerWidget = SingleVideoPlayerWidget(self)
         self.grid.addWidget(self.videoPlayerWidget, i//row, i%col)
         self.videoPlayerWidgetList.append(self.videoPlayerWidget)
+
+    def set_score_threshold(self, score_threshold):
+      for i in range(len(self.videoPlayerWidgetList)):
+        if self.videoPlayerWidgetList[i].videoPlayer.videoFrameProcessor != None:
+          self.videoPlayerWidgetList[i].videoPlayer.set_processor_score_threshold(score_threshold)

@@ -7,6 +7,8 @@ class YoloDetector():
     def __init__(self, model_path):
         self.detector = Detector(model_path, device, 0)
 
+        self.score_threshold = 0.3
+
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)
 
@@ -14,11 +16,15 @@ class YoloDetector():
         indices = [i for i in range(len(bboxes))]
         for index, bbox, label_id in zip(indices, bboxes, labels):
             score = bbox[4]
-            if score < 0.7:
+            # print("score = ", score)
+            if score < self.score_threshold:
                 continue
             # 绘制bounding box 和 label 文本
             self.draw_labels(frame, bbox, label_id)
         return frame
+
+    def set_score_threshold(self, threshold):
+        self.score_threshold = threshold
 
     def draw_labels(self, frame, bbox, label_id):
         [left, top, right, bottom] = bbox[0:4].astype(int)

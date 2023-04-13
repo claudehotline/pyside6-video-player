@@ -18,14 +18,14 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
     QLabel, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QStackedWidget, QStatusBar,
-    QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QSlider, QStackedWidget,
+    QStatusBar, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(933, 682)
+        MainWindow.resize(962, 682)
         MainWindow.setMaximumSize(QSize(16777215, 16777215))
         self.close = QAction(MainWindow)
         self.close.setObjectName(u"close")
@@ -148,6 +148,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.expand = QFrame(self.frame2)
         self.expand.setObjectName(u"expand")
+        self.expand.setMinimumSize(QSize(0, 0))
         self.expand.setMaximumSize(QSize(0, 16777215))
         self.expand.setFrameShape(QFrame.StyledPanel)
         self.expand.setFrameShadow(QFrame.Raised)
@@ -155,13 +156,60 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setSpacing(0)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(self.expand)
+        self.scoreFrame = QFrame(self.expand)
+        self.scoreFrame.setObjectName(u"scoreFrame")
+        self.scoreFrame.setFrameShape(QFrame.StyledPanel)
+        self.scoreFrame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_5 = QHBoxLayout(self.scoreFrame)
+        self.horizontalLayout_5.setSpacing(0)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.scoreFrame)
         self.label.setObjectName(u"label")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy2)
 
-        self.verticalLayout_5.addWidget(self.label)
+        self.horizontalLayout_5.addWidget(self.label)
+
+        self.scoreValue = QLabel(self.scoreFrame)
+        self.scoreValue.setObjectName(u"scoreValue")
+
+        self.horizontalLayout_5.addWidget(self.scoreValue)
 
 
-        self.horizontalLayout_3.addWidget(self.expand)
+        self.verticalLayout_5.addWidget(self.scoreFrame, 0, Qt.AlignTop)
+
+        self.frame_2 = QFrame(self.expand)
+        self.frame_2.setObjectName(u"frame_2")
+        sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
+        self.frame_2.setSizePolicy(sizePolicy)
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_4 = QHBoxLayout(self.frame_2)
+        self.horizontalLayout_4.setSpacing(0)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.scoreSlider = QSlider(self.frame_2)
+        self.scoreSlider.setObjectName(u"scoreSlider")
+        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.scoreSlider.sizePolicy().hasHeightForWidth())
+        self.scoreSlider.setSizePolicy(sizePolicy3)
+        self.scoreSlider.setMaximumSize(QSize(16777215, 16777215))
+        self.scoreSlider.setValue(30)
+        self.scoreSlider.setOrientation(Qt.Horizontal)
+
+        self.horizontalLayout_4.addWidget(self.scoreSlider)
+
+
+        self.verticalLayout_5.addWidget(self.frame_2)
+
+
+        self.horizontalLayout_3.addWidget(self.expand, 0, Qt.AlignTop)
 
         self.stackedWidget = QStackedWidget(self.frame2)
         self.stackedWidget.setObjectName(u"stackedWidget")
@@ -193,7 +241,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 933, 21))
+        self.menubar.setGeometry(QRect(0, 0, 962, 21))
         self.menubar.setStyleSheet(u"background-color: rgb(61, 63, 91);")
         self.file = QMenu(self.menubar)
         self.file.setObjectName(u"file")
@@ -232,7 +280,8 @@ class Ui_MainWindow(object):
         self.test2_btn.setText(QCoreApplication.translate("MainWindow", u"test2", None))
         self.bottomExpbtn.setText(QCoreApplication.translate("MainWindow", u"push", None))
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"setting", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"123123", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"score\u9608\u503c\uff1a", None))
+        self.scoreValue.setText(QCoreApplication.translate("MainWindow", u"0.3", None))
         self.file.setTitle(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6", None))
         self.setting.setTitle(QCoreApplication.translate("MainWindow", u"\u914d\u7f6e", None))
     # retranslateUi

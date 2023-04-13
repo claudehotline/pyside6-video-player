@@ -72,6 +72,20 @@ class MainWindow(QMainWindow):
     self.expand_btn = self.ui.bottomExpbtn
     self.expand_btn.clicked.connect(self.bottom_expand_btn_click)
 
+    # 设置左侧配置Frame组件
+    self.score_threshold_slider = self.ui.scoreSlider
+    # 设置slider的最大值和最小值
+    self.score_threshold_slider.setMinimum(0)
+    self.score_threshold_slider.setMaximum(100)
+    # score_threshold_slider 的滑动事件 
+    self.score_threshold_slider.valueChanged.connect(self.set_score_threshold)
+    self.score_value_label = self.ui.scoreValue
+
+  def set_score_threshold(self, value):
+    print('score_threshold_slider value: ', value/100)
+    self.score_value_label.setText(str(value/100))
+    self.videoPlayerTableWidget.set_score_threshold(value/100)
+
   def menuButtonClick(self):
     btn = self.sender()
     btnName = btn.objectName()

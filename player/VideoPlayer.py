@@ -90,6 +90,9 @@ class VideoPlayer(QObject):
         self.start_detect.emit()
         self.play = True
 
+    def set_processor_score_threshold(self, score_threshold):
+        self.videoFrameProcessor.set_detector_score_threshold(score_threshold)
+
     @Slot()
     def update_progress(self, frame_num):
         self.progress = int(frame_num / self.videoFrameReader.get_video_total_frames() * 100)

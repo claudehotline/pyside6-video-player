@@ -18,6 +18,7 @@ class VideoFrameProcessor(QObject):
 
         self.detecting = False
         self.is_decoding_finished = False
+        self.detector = None
         self.detectType = detectType
         self.model_list = model_list
         self.set_detector(self.detectType, self.model_list)
@@ -36,6 +37,9 @@ class VideoFrameProcessor(QObject):
             self.detector = PoseDetect(model_path1, model_path2)
         self.detecting = True
         print(self.detector)
+
+    def set_detector_score_threshold(self, score_threshold):
+        self.detector.set_score_threshold(score_threshold)
 
     @Slot(int)
     def set_current_frame(self, current_frame):
