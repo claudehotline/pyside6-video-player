@@ -13,6 +13,7 @@ class PoseDetect():
     def detect(self, frame):
         # apply detector
         bboxes, labels, _ = self.detector(frame)
+        # print(bboxes)
         keep = np.logical_and(labels == 0, bboxes[..., 4] > 0.6)
         bboxes = bboxes[keep, :4]
         result = self.pose_detector(frame, bboxes)

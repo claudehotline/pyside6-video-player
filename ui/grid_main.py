@@ -138,7 +138,7 @@ class Ui_MainWindow(object):
 
         self.frame2 = QFrame(self.centralwidget)
         self.frame2.setObjectName(u"frame2")
-        self.frame2.setStyleSheet(u"")
+        self.frame2.setStyleSheet(u"background-color: rgb(89, 89, 89);")
         self.frame2.setFrameShape(QFrame.StyledPanel)
         self.frame2.setFrameShadow(QFrame.Raised)
         self.frame2.setLineWidth(1)
