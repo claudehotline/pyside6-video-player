@@ -13,15 +13,22 @@ class PoseDetect():
     def detect(self, frame):
         # apply detector
         bboxes, labels, _ = self.detector(frame)
-        # print(bboxes)
-        keep = np.logical_and(labels == 0, bboxes[..., 4] > 0.3)
+        keep = np.logical_and(labels == 0, bboxes[..., 4] > 0.7)
         bboxes = bboxes[keep, :4]
-        print("bboxes = ", bboxes)
+        for bbox in bboxes:
+            print("目标检测框: ",bbox)
+            cv2.rectangle(frame, (bbox[0].astype(int), bbox[1].astype(int)), (bbox[2].astype(int), bbox[3].astype(int)), (0, 255, 0), 1)
         result = self.pose_detector(frame, bboxes)
 
-        print(result)
+        print("关键点个数：",result.shape[1])
+        keypoint_num = result.shape[1]
         # draw result
-        frame = self.visualize_hand(frame, result, 0.1, 1280)
+        if keypoint_num == 17:
+            frame = self.visualize(frame, result, 0.5, 1280)
+        elif keypoint_num == 21:
+            frame = self.visualize_hand(frame, result, 0.5, 1280)
+        elif keypoint_num == 133:
+            frame = self.visualize_wholebody(frame, result, 0.5, 1280)
 
         return frame  
     
@@ -41,12 +48,9 @@ class PoseDetect():
         ]
         point_color = [16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0, 0]
 
-        scale = resize / max(frame.shape[0], frame.shape[1])
-
         scores = keypoints[..., 2]
-        keypoints = (keypoints[..., :2] * scale).astype(int)
+        keypoints = keypoints[..., :2].astype(int)
 
-        frame = cv2.resize(frame, (0, 0), fx=scale, fy=scale)
         for kpts, score in zip(keypoints, scores):
             show = [0] * len(kpts)
             for (u, v), color in zip(skeleton, link_color):
@@ -56,7 +60,7 @@ class PoseDetect():
                     show[u] = show[v] = 1
             for kpt, show, color in zip(kpts, show, point_color):
                 if show:
-                    cv2.circle(frame, kpt, 1, palette[color], 2, cv2.LINE_AA)
+                    cv2.circle(frame, kpt, 1, palette[color], 1, cv2.LINE_AA)
         return frame
 
 
@@ -75,12 +79,10 @@ class PoseDetect():
         ]
         point_color = [16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0, 0]
 
-        scale = resize / max(frame.shape[0], frame.shape[1])
 
         scores = keypoints[..., 2]
-        keypoints = (keypoints[..., :2] * scale).astype(int)
+        keypoints = keypoints[..., :2].astype(int)
 
-        frame = cv2.resize(frame, (0, 0), fx=scale, fy=scale)
         for kpts, score in zip(keypoints, scores):
             show = [0] * len(kpts)
             for (u, v), color in zip(skeleton, link_color):
@@ -90,5 +92,20 @@ class PoseDetect():
                     show[u] = show[v] = 1
             for kpt, show, color in zip(kpts, show, point_color):
                 if show:
-                    cv2.circle(frame, kpt, 1, palette[color], 2, cv2.LINE_AA)
+                    cv2.circle(frame, kpt, 1, palette[color], 1, cv2.LINE_AA)
+        return frame
+
+
+    def visualize_wholebody(self, frame, keypoints, thr=0.5, resize=1280):
+        frame = self.visualize(frame, keypoints=keypoints[:,:17,:], thr=0.5)
+        frame = self.visualize_hand(frame, keypoints=keypoints[:,91:112,:], thr=0.5)
+        frame = self.visualize_hand(frame, keypoints=keypoints[:,112:133,:], thr=0.5)
+
+        keypoints = keypoints[..., :2].astype(int)
+
+        for kpts in keypoints:
+            for kpt in range(len(kpts)):
+                if kpt >=23 and kpt <= 90:
+                    cv2.circle(frame, kpts[kpt], 1, (255, 255, 255), 1, cv2.LINE_AA)
+        
         return frame
