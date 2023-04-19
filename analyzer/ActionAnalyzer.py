@@ -9,9 +9,6 @@ from mmengine.structures import InstanceData
 import mmcv
 from mmaction.apis import (detection_inference, inference_recognizer,
                         init_recognizer, pose_inference)
-<<<<<<< HEAD
-from mmaction.registry import VISUALIZERS
-=======
 from mmaction.registry import VISUALIZERS, MODELS
 from mmengine.utils import track_iter_progress
 from mmaction.structures import ActionDataSample
@@ -46,7 +43,6 @@ plate_blue = [hex2color(h) for h in plate_blue]
 plate_green = '004b23-006400-007200-008000-38b000-70e000'
 plate_green = plate_green.split('-')
 plate_green = [hex2color(h) for h in plate_green]
->>>>>>> 35ec019478da300cbce3088e4d89f4ac43b82f20
 
 class ActionAnalyzer:
 
@@ -54,55 +50,23 @@ class ActionAnalyzer:
 
         self.clip = []
 
-        self.det_config = 'I:/mmaction2/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py'
-        self.det_checkpoint = 'I:/mmaction2/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'
+        self.det_config = 'D:/Projects/deeplearning/mmlab/mmaction2/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py'
+        self.det_checkpoint = 'D:/Projects/deeplearning/mmlab/mmaction2/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'
 
-        self.pose_config = 'I:/mmaction2/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'
-        self.pose_checkpoint = 'I:/mmaction2/hrnet_w32_coco_256x192-c78dce93_20200708.pth'
+        # self.pose_config = 'D:/Projects/deeplearning/mmlab/mmaction2/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'
+        # self.pose_checkpoint = 'D:/Projects/deeplearning/mmlab/mmaction2/hrnet_w32_coco_256x192-c78dce93_20200708.pth'
         
-        # self.config = 'I:/mmaction2/configs/skeleton/2s-agcn/2s-agcn_8xb16-joint-u100-80e_ntu60-xsub-keypoint-2d.py'
-        self.config = 'I:/mmaction2/configs/detection/slowfast/slowfast_kinetics400-pretrained-r50_8xb6-8x8x1-cosine-10e_ava22-rgb.py'
-        # self.checkpoint = 'I:/mmaction2/2s-agcn_8xb16-joint-u100-80e_ntu60-xsub-keypoint-2d_20221222-4c0ed77e.pth'
-        self.checkpoint = 'i:/mmaction2/slowfast_kinetics400-pretrained-r50_8xb16-4x16x1-20e_ava21-rgb_20220906-5180ea3c.pth'
+        self.config = 'D:/Projects/deeplearning/mmlab/mmaction2/configs/detection/slowfast/slowfast_kinetics400-pretrained-r50_8xb6-8x8x1-cosine-10e_ava22-rgb.py'
+        # self.checkpoint = 'D:/Projects/deeplearning/mmlab/mmaction2/slowfast_kinetics400-pretrained-r50_8xb16-4x16x1-20e_ava21-rgb_20220906-5180ea3c.pth'
+        self.checkpoint = 'D:/Projects/deeplearning/mmlab/mmaction2/slowfast_kinetics400-pretrained-r50_8xb6-8x8x1-cosine-10e_ava22-rgb_20220906-d934a48f.pth'
         self.config = mmengine.Config.fromfile(self.config)
 
-        # self.label_map = 'annotations/label_map_ntu60.txt'
-        # with open('annotations/label_map_ntu60.txt') as f:
-        #     self.label_map = [x.strip() for x in f.readlines()]
-        # with open('annotations/label_map.txt') as f:
-        #     self.label_map = [x.strip() for x in f.readlines()]
         self.label_map = self.load_label_map('annotations/label_map.txt')
 
-<<<<<<< HEAD
-    def detect(self, clip):
-        det_results, _ = detection_inference(self.det_config, self.det_checkpoint,
-                                            clip, device=device)
-        torch.cuda.empty_cache()
-        pose_results, pose_data_samples = pose_inference(self.pose_config,
-                                                        self.pose_checkpoint,
-                                                        clip, det_results,
-                                                        device)
-        torch.cuda.empty_cache()
+        self.vis_frames = []
 
-        fake_anno = dict(
-            frame_dir='',
-            label=-1,
-            img_shape=clip[0].shape,
-            original_shape=clip[0].shape,
-            start_index=0,
-            modality='Pose',
-            total_frames=len(self.clip))
-        num_person = max([len(x['keypoints']) for x in pose_results])
+        self.results = []
 
-        num_keypoint = 17
-        keypoint = np.zeros((len(self.clip), num_person, num_keypoint, 2),
-                            dtype=np.float16)
-        keypoint_score = np.zeros((len(self.clip), num_person, num_keypoint),
-                                dtype=np.float16)
-        for i, poses in enumerate(pose_results):
-            keypoint[i] = poses['keypoints']
-            keypoint_score[i] = poses['keypoint_scores']
-=======
     # def detect(self, frame):
     #     self.clip.append(frame)
     #     if len(self.clip) == 8:
@@ -127,7 +91,6 @@ class ActionAnalyzer:
     #         )
 
     #         num_person = max([len(x['keypoints']) for x in pose_results])
->>>>>>> 35ec019478da300cbce3088e4d89f4ac43b82f20
 
     #         num_keypoint = 17
     #         keypoint = np.zeros((len(self.clip), num_person, num_keypoint, 2),
@@ -164,35 +127,6 @@ class ActionAnalyzer:
         self.clip.append(frame)
         if len(self.clip) == 8:
 
-<<<<<<< HEAD
-    def visualize(self, args, frames, data_samples, action_label):
-        pose_config = mmengine.Config.fromfile(self.pose_config)
-        visualizer = VISUALIZERS.build(pose_config.visualizer)
-        visualizer.set_dataset_meta(data_samples[0].dataset_meta)
-
-        vis_frames = []
-        print('Drawing skeleton for each frame')
-        for d, f in track_iter_progress(list(zip(data_samples, frames))):
-            f = mmcv.imconvert(f, 'bgr', 'rgb')
-            visualizer.add_datasample(
-                'result',
-                f,
-                data_sample=d,
-                draw_gt=False,
-                draw_heatmap=False,
-                draw_bbox=True,
-                show=False,
-                wait_time=0,
-                out_file=None,
-                kpt_thr=0.3)
-            vis_frame = visualizer.get_image()
-            cv2.putText(vis_frame, action_label, (10, 30), FONTFACE, FONTSCALE,
-                        FONTCOLOR, THICKNESS, LINETYPE)
-            vis_frames.append(vis_frame)
-
-        vid = mpy.ImageSequenceClip(vis_frames, fps=24)
-        vid.write_videofile(args.out_filename, remove_temp=True)
-=======
             h, w, _ = self.clip[0].shape
 
             # resize frames to shortside
@@ -202,65 +136,83 @@ class ActionAnalyzer:
 
             human_detections, _ = detection_inference(self.det_config,
                                             self.det_checkpoint,
-                                            frames,
+                                            self.clip,
                                             0.5,
                                             0, device)
+            # print(human_detections[0])
+            if(len(human_detections[0]) > 0):
             
-            torch.cuda.empty_cache()
+                torch.cuda.empty_cache()
 
-            for i in range(len(human_detections)):
-                det = human_detections[i]
-                det[:, 0:4:2] *= w_ratio
-                det[:, 1:4:2] *= h_ratio
-                human_detections[i] = torch.from_numpy(det[:, :4]).to(device)
-        
-            try:
-                self.config['model']['test_cfg']['rcnn'] = dict(action_thr=0)
-            except KeyError:
-                pass
+                for i in range(len(human_detections)):
+                    det = human_detections[i]
+                    det[:, 0:4:2] *= w_ratio
+                    det[:, 1:4:2] *= h_ratio
+                    human_detections[i] = torch.from_numpy(det[:, :4]).to(device)
+            
+                try:
+                    self.config['model']['test_cfg']['rcnn'] = dict(action_thr=0)
+                except KeyError:
+                    pass
 
-            self.config.model.backbone.pretrained = None
-            model = MODELS.build(self.config.model)
+                self.config.model.backbone.pretrained = None
+                model = MODELS.build(self.config.model)
 
-            load_checkpoint(model, self.checkpoint, map_location='cpu')
-            model.to(device)
-            model.eval()
+                load_checkpoint(model, self.checkpoint, map_location=device)
+                model.to(device)
+                model.eval()
 
-            predictions = []
+                predictions = []
+                img_norm_cfg = dict(
+                    mean=np.array(self.config.model.data_preprocessor.mean),
+                    std=np.array(self.config.model.data_preprocessor.std),
+                    to_rgb=False
+                )
 
-            imgs = [ x.astype(np.float32) for x in self.clip]
-            # THWC -> CTHW -> 1CTHW
-            input_array = np.stack(imgs).transpose((3,0,1,2))[np.newaxis]
-            input_tensor = torch.from_numpy(input_array).to(device)
+                # Normalize
+                imgs = [ x.astype(np.float32) for x in frames]
+                _ = [mmcv.imnormalize(x, **img_norm_cfg) for x in imgs]
+                
+                # THWC -> CTHW -> 1CTHW
+                input_array = np.stack(imgs).transpose((3,0,1,2))[np.newaxis]
+                input_tensor = torch.from_numpy(input_array).to(device)
 
-            datasample = ActionDataSample()
-            datasample.proposals = InstanceData(bboxes=human_detections[7])
-            datasample.set_metainfo(dict(img_shape=(new_h, new_w)))
+                datasample = ActionDataSample()
+                datasample.proposals = InstanceData(bboxes=human_detections[7])
+                datasample.set_metainfo(dict(img_shape=(new_h, new_w)))
 
-            with torch.no_grad():
-                result = model(input_tensor, [datasample], mode='predict')
-            scores = result[0].pred_instances.scores
-            prediction = []
-            # N proposals
-            for i in range(human_detections[7].shape[0]):
-                prediction.append([])
-            # Perform action score thr
-            print('scores.shape = ', scores.shape)
-            for i in range(scores.shape[1]):
-                if i not in self.label_map:
-                    continue
-                for j in range(human_detections[7].shape[0]):
-                    if scores[j, i] > 0.5:
-                        prediction[j].append((self.label_map[i], scores[j,i].item()))
-            predictions.append(prediction)
-            results = []
-            for human_detection, prediction in zip(human_detections, predictions):
-                results.append(self.pack_result(human_detection, prediction, new_h, new_w))
-            vis_frames = self.visualize(frames, results)
-            for i in range(len(vis_frames)):
-                cv2.imwrite('vis_frame_{}.jpg'.format(i), vis_frames[i])
-            print(predictions)
+                with torch.no_grad():
+                    result = model(input_tensor, [datasample], mode='predict')
+                    scores = result[0].pred_instances.scores
+                    prediction = []
+
+                    # N proposals
+                    for i in range(human_detections[7].shape[0]):
+                        prediction.append([])
+                    # Perform action score thr
+                    print('scores.shape = ', scores.shape)
+                    for i in range(scores.shape[1]):
+                        if i not in self.label_map:
+                            continue
+                        for j in range(human_detections[7].shape[0]):
+                            if scores[j, i] > 0.5:
+                                prediction[j].append((self.label_map[i], scores[j,i].item()))
+                    predictions.append(prediction)
+
+                self.results = []
+                for human_detection, prediction in zip(human_detections, predictions):
+                    self.results.append(self.pack_result(human_detection, prediction, new_h, new_w))
+                self.vis_frames = self.visualize(self.clip, self.results)
+                for i in range(len(self.vis_frames)):
+                    cv2.imwrite('vis_frame_{}.jpg'.format(i), self.vis_frames[i])
+                print(predictions)
+
             self.clip = []
+
+        if len(self.results) > 0:
+            frame = frame[np.newaxis, ...]
+            frame = self.visualize(frame, [self.results[-1]])[0]
+            # print('frame.shape = ', frame.shape)
         return frame
 
     # def visualize(self, frames, data_samples, action_label):
@@ -364,7 +316,9 @@ class ActionAnalyzer:
                     if not len(label):
                         continue
                     score = ann[2]
+                    # print("box = ", box)
                     box = (box * scale_ratio).astype(np.int64)
+                    # print("box_scale = ", box)
                     st, ed = tuple(box[:2]), tuple(box[2:])
                     cv2.rectangle(frame, st, ed, plate[0], 2)
                     for k, lb in enumerate(label):
@@ -395,4 +349,3 @@ class ActionAnalyzer:
         lines = open(file_path).readlines()
         lines = [x.strip().split(': ') for x in lines]
         return {int(x[0]): x[1] for x in lines}
->>>>>>> 35ec019478da300cbce3088e4d89f4ac43b82f20
