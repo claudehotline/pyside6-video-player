@@ -192,6 +192,9 @@ class ActionAnalyzer:
             results = []
             for human_detection, prediction in zip(human_detections, predictions):
                 results.append(self.pack_result(human_detection, prediction, new_h, new_w))
+            vis_frames = self.visualize(frames, results)
+            for i in range(len(vis_frames)):
+                cv2.imwrite('vis_frame_{}.jpg'.format(i), vis_frames[i])
             print(predictions)
             self.clip = []
         return frame
