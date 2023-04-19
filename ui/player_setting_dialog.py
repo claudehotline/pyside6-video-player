@@ -16,15 +16,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
-    QDialogButtonBox, QFrame, QGroupBox, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QRadioButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+    QDialogButtonBox, QFrame, QGridLayout, QGroupBox,
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QRadioButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(384, 348)
+        Dialog.resize(387, 427)
         self.verticalLayout_7 = QVBoxLayout(Dialog)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.frame_8 = QFrame(Dialog)
@@ -43,25 +44,64 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.detectType = QLabel(self.frame)
+        self.frame_4 = QFrame(self.frame)
+        self.frame_4.setObjectName(u"frame_4")
+        self.frame_4.setMaximumSize(QSize(80, 16777215))
+        self.frame_4.setFrameShape(QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.verticalLayout = QVBoxLayout(self.frame_4)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(-1, 5, -1, -1)
+        self.detectType = QLabel(self.frame_4)
         self.detectType.setObjectName(u"detectType")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.detectType.sizePolicy().hasHeightForWidth())
+        self.detectType.setSizePolicy(sizePolicy)
 
-        self.horizontalLayout.addWidget(self.detectType)
+        self.verticalLayout.addWidget(self.detectType, 0, Qt.AlignTop)
 
-        self.detection = QRadioButton(self.frame)
-        self.detection.setObjectName(u"detection")
 
-        self.horizontalLayout.addWidget(self.detection)
+        self.horizontalLayout.addWidget(self.frame_4)
 
-        self.segmentation = QRadioButton(self.frame)
-        self.segmentation.setObjectName(u"segmentation")
-
-        self.horizontalLayout.addWidget(self.segmentation)
-
-        self.poseRecognition = QRadioButton(self.frame)
+        self.frame_2 = QFrame(self.frame)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.gridLayout = QGridLayout(self.frame_2)
+        self.gridLayout.setSpacing(0)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.poseRecognition = QRadioButton(self.frame_2)
         self.poseRecognition.setObjectName(u"poseRecognition")
 
-        self.horizontalLayout.addWidget(self.poseRecognition)
+        self.gridLayout.addWidget(self.poseRecognition, 0, 2, 1, 1)
+
+        self.segmentation = QRadioButton(self.frame_2)
+        self.segmentation.setObjectName(u"segmentation")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.segmentation.sizePolicy().hasHeightForWidth())
+        self.segmentation.setSizePolicy(sizePolicy1)
+
+        self.gridLayout.addWidget(self.segmentation, 0, 1, 1, 1)
+
+        self.actionRecognition = QRadioButton(self.frame_2)
+        self.actionRecognition.setObjectName(u"actionRecognition")
+
+        self.gridLayout.addWidget(self.actionRecognition, 1, 0, 1, 3)
+
+        self.detection = QRadioButton(self.frame_2)
+        self.detection.setObjectName(u"detection")
+        sizePolicy.setHeightForWidth(self.detection.sizePolicy().hasHeightForWidth())
+        self.detection.setSizePolicy(sizePolicy)
+
+        self.gridLayout.addWidget(self.detection, 0, 0, 1, 1)
+
+
+        self.horizontalLayout.addWidget(self.frame_2)
 
 
         self.verticalLayout_5.addWidget(self.frame)
@@ -71,7 +111,9 @@ class Ui_Dialog(object):
         self.frame_3.setFrameShape(QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame_3)
+        self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.model1Label = QLabel(self.frame_3)
         self.model1Label.setObjectName(u"model1Label")
 
@@ -144,20 +186,17 @@ class Ui_Dialog(object):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.FileDialogBtn = QPushButton(self.frame_6)
         self.FileDialogBtn.setObjectName(u"FileDialogBtn")
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.FileDialogBtn.sizePolicy().hasHeightForWidth())
-        self.FileDialogBtn.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.FileDialogBtn.sizePolicy().hasHeightForWidth())
+        self.FileDialogBtn.setSizePolicy(sizePolicy1)
 
-        self.verticalLayout_3.addWidget(self.FileDialogBtn)
+        self.verticalLayout_3.addWidget(self.FileDialogBtn, 0, Qt.AlignTop)
 
         self.localCamSelector = QComboBox(self.frame_6)
         self.localCamSelector.setObjectName(u"localCamSelector")
-        sizePolicy.setHeightForWidth(self.localCamSelector.sizePolicy().hasHeightForWidth())
-        self.localCamSelector.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.localCamSelector.sizePolicy().hasHeightForWidth())
+        self.localCamSelector.setSizePolicy(sizePolicy1)
 
-        self.verticalLayout_3.addWidget(self.localCamSelector)
+        self.verticalLayout_3.addWidget(self.localCamSelector, 0, Qt.AlignVCenter)
 
         self.netUrlInput = QLineEdit(self.frame_6)
         self.netUrlInput.setObjectName(u"netUrlInput")
@@ -185,8 +224,8 @@ class Ui_Dialog(object):
 
 
         self.retranslateUi(Dialog)
-        # self.buttonBox.accepted.connect(Dialog.accept)
-        # self.buttonBox.rejected.connect(Dialog.reject)
+        self.buttonBox.accepted.connect(Dialog.accept)
+        self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
     # setupUi
@@ -195,9 +234,10 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"\u6a21\u578b\u8bbe\u7f6e", None))
         self.detectType.setText(QCoreApplication.translate("Dialog", u"\u68c0\u6d4b\u7c7b\u522b", None))
-        self.detection.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u68c0\u6d4b", None))
-        self.segmentation.setText(QCoreApplication.translate("Dialog", u"\u8bed\u4e49\u5206\u5272", None))
         self.poseRecognition.setText(QCoreApplication.translate("Dialog", u"\u59ff\u6001\u8bc6\u522b", None))
+        self.segmentation.setText(QCoreApplication.translate("Dialog", u"\u8bed\u4e49\u5206\u5272", None))
+        self.actionRecognition.setText(QCoreApplication.translate("Dialog", u"\u52a8\u4f5c\u7406\u89e3", None))
+        self.detection.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u68c0\u6d4b", None))
         self.model1Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))
         self.model2Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"\u89c6\u9891\u8bbe\u7f6e", None))

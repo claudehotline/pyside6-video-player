@@ -7,6 +7,7 @@ import os
 from analyzer.YoloDetector import YoloDetector
 from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
+from analyzer.ActionAnalyzer import ActionAnalyzer
 
 class VideoFrameProcessor(QObject):
     
@@ -35,6 +36,10 @@ class VideoFrameProcessor(QObject):
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/pose' + os.path.sep + model_list[1]
             self.detector = PoseDetect(model_path1, model_path2)
+        elif detectType == '动作理解':
+            print(1111)
+            model_path = 'model/detect' + os.path.sep + model_list[0]
+            self.detector = ActionAnalyzer(model_path)
         self.detecting = True
         print(self.detector)
 
@@ -75,7 +80,7 @@ class VideoFrameProcessor(QObject):
             frame = self.frame_buffer.get_frame()
             # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
-                cv2.imwrite('test.jpg', frame)
+                # cv2.imwrite('test.jpg', frame)
                 result = self.detector.detect(frame)
                 self.current_frame = self.current_frame + 1
                 self.update_progress.emit(self.current_frame)
