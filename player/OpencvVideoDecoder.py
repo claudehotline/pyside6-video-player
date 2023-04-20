@@ -36,6 +36,9 @@ class OpencvVideoDecoder(QObject):
   def set_decoding_status(self, status):
     self.decoding = status
 
+  def get_decoding_status(self):
+    return self.decoding
+
   def set_pause_status(self, status):
     self.pause = status
 
@@ -45,10 +48,12 @@ class OpencvVideoDecoder(QObject):
     while self.decoding:
 
       ret, frame = self.cap.read()
+      # print(ret)
       if not ret:
         break
       self.frame_buffer.add_frame(frame)
-      
+    
+    self.decoding = False
       # cv2.waitKey(int(1000 / 40))
     print('decoder stop')
     self.decoding_finished.emit()

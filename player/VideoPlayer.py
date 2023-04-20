@@ -1,5 +1,6 @@
 from PySide6.QtCore import QObject, Signal, QThread, Slot
 import numpy as np
+import torch
 from .VideoFrameProcessor import VideoFrameProcessor
 from .OpencvVideoDecoder import OpencvVideoDecoder
 from .FFmpegVideoDecoder import FFmpegVideoDecoder
@@ -14,6 +15,7 @@ class VideoPlayer(QObject):
     start_detect = Signal()
     start_decode = Signal()
     update_progress_bar = Signal(int)
+    stop = Signal()
 
     def __init__(self):
         QObject.__init__(self)
@@ -39,6 +41,13 @@ class VideoPlayer(QObject):
         else:
             if self.video_path != self.videoFrameReader.get_video_path() and self.video_path != '':
                 self.videoFrameReader.set_video_path(self.video_path)
+                self.frameBuffer.clear_buffer()
+                if self.videoFrameReader.get_decoding_status() == False:
+                    self.videoFrameReader.set_decoding_status(True)
+                    self.start_decode.emit()
+                if self.videoFrameProcessor.detecting == False:
+                    self.videoFrameProcessor.detecting = True
+                    self.start_detect.emit()
             if self.detectType != self.videoFrameProcessor.get_detectType() or self.model_list != self.videoFrameProcessor.get_model_list():
                 self.videoFrameProcessor.set_detector(self.detectType, self.model_list)
 
@@ -113,6 +122,9 @@ class VideoPlayer(QObject):
 
     def get_setting_status(self):
         return self.is_setting_done
+    
+    def set_setting_status(self, status):
+        self.is_setting_done = status
 
     def get_play_status(self):
         return self.play
@@ -141,13 +153,17 @@ class VideoPlayer(QObject):
         self.videoFrameReaderThread.start()
         self.play = True
 
+    @Slot()
     def release(self):
+        self.play = False
         if self.videoFrameReaderThread.isRunning():
             self.videoFrameReader.set_decoding_status(False)
             self.videoFrameReaderThread.quit()
             self.videoFrameReaderThread.wait()
-            self.videoFrameReader.cap.release()      
+            self.videoFrameReader.cap.release()
+        self.frameBuffer.clear_buffer()      
         if self.videoFrameProcessorThread.isRunning():
             self.videoFrameProcessor.set_detecting_status(False)
             self.videoFrameProcessorThread.quit()
             self.videoFrameProcessorThread.wait()
+        self.stop.emit()

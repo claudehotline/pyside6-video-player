@@ -35,8 +35,14 @@ class SingleVideoPlayerWidget(QWidget):
         self.play_button = self.ui.playButton
         self.play_button.clicked.connect(self.play)
 
+        # 停止按钮
+        self.stop_button = self.ui.stopButton
+
         # 创建播放器对象
         self.videoPlayer = VideoPlayer()
+        self.stop_button.clicked.connect(self.videoPlayer.release)
+        self.videoPlayer.stop.connect(self.stop)
+
         # 创建播放器线程
         self.videoPlayer_thread = QThread()
         self.begin.connect(self.videoPlayer.playVideo)
@@ -74,6 +80,15 @@ class SingleVideoPlayerWidget(QWidget):
     @Slot()
     def stop_play(self):
         self.videoPlayer.set_play_status(False)
+
+    @Slot()
+    def stop(self):
+        self.play_button.setText('播放')
+        # self.videoPlayer.set_play_status(False)
+        self.videoPlayer.set_setting_status(False)
+        # self.videoPlayer.set_frame(0)
+        self.slide_bar.setValue(0)
+        self.label.clear()
 
     @Slot(int, QProgressBar)
     @staticmethod

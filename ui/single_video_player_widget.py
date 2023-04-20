@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'single_video_player_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.3
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -88,8 +88,15 @@ class Ui_Form(object):
         self.playButton.setObjectName(u"playButton")
         sizePolicy.setHeightForWidth(self.playButton.sizePolicy().hasHeightForWidth())
         self.playButton.setSizePolicy(sizePolicy)
+        self.playButton.setMaximumSize(QSize(40, 16777215))
 
         self.horizontalLayout_3.addWidget(self.playButton)
+
+        self.stopButton = QPushButton(self.progress)
+        self.stopButton.setObjectName(u"stopButton")
+        self.stopButton.setMaximumSize(QSize(40, 16777215))
+
+        self.horizontalLayout_3.addWidget(self.stopButton)
 
         self.horizontalSlider = QSlider(self.progress)
         self.horizontalSlider.setObjectName(u"horizontalSlider")
@@ -111,5 +118,6 @@ class Ui_Form(object):
         self.playerSettingBtn.setText(QCoreApplication.translate("Form", u"\u8bbe\u7f6e", None))
         self.label.setText("")
         self.playButton.setText(QCoreApplication.translate("Form", u"\u64ad\u653e", None))
+        self.stopButton.setText(QCoreApplication.translate("Form", u"\u505c\u6b62", None))
     # retranslateUi
 
