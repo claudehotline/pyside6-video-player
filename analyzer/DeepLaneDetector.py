@@ -14,7 +14,7 @@ from analyzer import device
 class DeepLaneDetector:
 
     def __init__(self):
-        self.detector = onnxruntime.InferenceSession('model/lane/utral-fast/culane_18.onnx')
+        self.detector = onnxruntime.InferenceSession('model/lane/ultral-fast/culane_18.onnx')
 
         self.row_anchor = culane_row_anchor
         self.cls_num_per_lane = 18
@@ -29,10 +29,6 @@ class DeepLaneDetector:
     def detect(self, frame):
         vis = frame.copy()
         img_w, img_h = frame.shape[1], frame.shape[0]
-        # frame = np.transpose(frame, (2, 0, 1))
-        # 转为int8
-        # frame = frame.astype(np.uint8)
-        # print('frame = ',frame)
         frame = Image.fromarray(frame)
         frame = self.img_transforms(frame).unsqueeze(0)
         ort_inputs = {self.detector.get_inputs()[0].name: self.to_numpy(frame)}

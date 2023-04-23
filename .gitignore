@@ -1,3 +1,4 @@
 model/
 video/
-**/__pycache__
+# 忽略  __pycache__ 文件夹 和 子目录中的__pycache__文件夹
+**/__pycache__/
