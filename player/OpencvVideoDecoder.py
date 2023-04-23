@@ -47,6 +47,9 @@ class OpencvVideoDecoder(QObject):
 
     while self.decoding:
 
+      if self.frame_buffer.get_buffer_length() > 500:
+        self.decoding = False
+
       ret, frame = self.cap.read()
       # print(ret)
       if not ret:

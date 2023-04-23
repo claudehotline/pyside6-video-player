@@ -15,6 +15,7 @@ class VideoFrameProcessor(QObject):
     
     result = Signal(np.ndarray)
     update_progress = Signal(int)
+    start_decoding = Signal()
 
     def __init__(self, detectType, model_list):
         super().__init__()
@@ -80,6 +81,8 @@ class VideoFrameProcessor(QObject):
             start_detect_time = time.time()
             # 如果帧缓冲区中有帧，则取出一帧进行处理
             frame = self.frame_buffer.get_frame()
+            if self.frame_buffer.get_buffer_length() < 100:
+                self.start_decoding.emit()
             # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
                 # cv2.imwrite('test.jpg', frame)

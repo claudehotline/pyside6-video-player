@@ -75,6 +75,7 @@ class VideoPlayer(QObject):
         self.videoFrameProcessor.update_progress.connect(lambda x: self.update_progress(x))
         self.set_frame_num.connect(lambda x:self.videoFrameProcessor.set_frame_num(x))
         self.videoFrameReader.decoding_finished.connect(self.send_decoding_finished_to_process)
+        self.videoFrameProcessor.start_decoding.connect(self.start_decoding)
         # 设置检测器线程
         self.videoFrameProcessor.moveToThread(self.videoFrameProcessorThread)
 
@@ -141,6 +142,11 @@ class VideoPlayer(QObject):
             video_decoder = OpencvVideoDecoder()
             video_decoder.set_video_path(video_path)
             return video_decoder
+
+    @Slot()
+    def start_decoding(self):
+        self.videoFrameReader.set_decoding_status(True)
+        self.start_decode.emit()
 
     @Slot()
     def send_decoding_finished_to_process(self):
