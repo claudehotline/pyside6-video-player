@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(781, 532)
+        Form.resize(945, 727)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -88,8 +88,15 @@ class Ui_Form(object):
         self.playButton.setObjectName(u"playButton")
         sizePolicy.setHeightForWidth(self.playButton.sizePolicy().hasHeightForWidth())
         self.playButton.setSizePolicy(sizePolicy)
+        self.playButton.setMaximumSize(QSize(40, 16777215))
 
         self.horizontalLayout_3.addWidget(self.playButton)
+
+        self.stopButton = QPushButton(self.progress)
+        self.stopButton.setObjectName(u"stopButton")
+        self.stopButton.setMaximumSize(QSize(40, 16777215))
+
+        self.horizontalLayout_3.addWidget(self.stopButton)
 
         self.horizontalSlider = QSlider(self.progress)
         self.horizontalSlider.setObjectName(u"horizontalSlider")
@@ -111,5 +118,6 @@ class Ui_Form(object):
         self.playerSettingBtn.setText(QCoreApplication.translate("Form", u"\u8bbe\u7f6e", None))
         self.label.setText("")
         self.playButton.setText(QCoreApplication.translate("Form", u"\u64ad\u653e", None))
+        self.stopButton.setText(QCoreApplication.translate("Form", u"\u505c\u6b62", None))
     # retranslateUi
 

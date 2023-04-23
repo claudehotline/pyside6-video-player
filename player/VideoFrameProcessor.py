@@ -7,7 +7,8 @@ import os
 from analyzer.YoloDetector import YoloDetector
 from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
-from analyzer.ActionAnalyzer import ActionAnalyzer
+# from analyzer.ActionAnalyzer import ActionAnalyzer
+from analyzer.DeepLaneDetector import DeepLaneDetector
 
 class VideoFrameProcessor(QObject):
     
@@ -37,11 +38,10 @@ class VideoFrameProcessor(QObject):
             model_path2 = 'model/pose' + os.path.sep + model_list[1]
             self.detector = PoseDetect(model_path1, model_path2)
         elif detectType == '动作理解':
-            print(1111)
-            model_path = 'model/detect' + os.path.sep + model_list[0]
-            self.detector = ActionAnalyzer(model_path)
+            # model_path = 'model/detect' + os.path.sep + model_list[0]
+            # self.detector = ActionAnalyzer(model_path)
+            self.detector = DeepLaneDetector()
         self.detecting = True
-        print(self.detector)
 
     def set_detector_score_threshold(self, score_threshold):
         self.detector.set_score_threshold(score_threshold)
@@ -90,8 +90,10 @@ class VideoFrameProcessor(QObject):
                     fps = round(frame_count / (end_time - start_time), 0)         
                     start_time = time.time()
                     frame_count = 0
+                    
                 cv2.putText(result, "FPS: {:.2f}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
+                # print('emit result')
                 self.result.emit(result)
             if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
                 print('视频处理结束')
