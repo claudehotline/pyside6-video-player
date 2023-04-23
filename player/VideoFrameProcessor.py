@@ -1,4 +1,5 @@
 from PySide6.QtCore import QObject, Signal, Slot
+import torch
 import numpy as np
 import time
 import cv2
@@ -27,6 +28,7 @@ class VideoFrameProcessor(QObject):
         self.current_frame = 0
 
     def set_detector(self, detectType, model_list):
+        torch.cuda.empty_cache()
         if detectType == '目标检测':
             model_path = 'model/detect' + os.path.sep + model_list[0]
             self.detector = YoloDetector(model_path)
