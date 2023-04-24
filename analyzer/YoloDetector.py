@@ -8,7 +8,7 @@ class YoloDetector():
     def __init__(self, model_path):
         self.detector = Detector(model_path, device, 0)
 
-        self.score_threshold = 0.3
+        self.score_threshold = 0.5
 
         self.sort = Sort(max_age=30, min_hits=3, iou_threshold=0.3)
 
@@ -24,8 +24,13 @@ class YoloDetector():
                 continue
             # 绘制bounding box 和 label 文本
             self.draw_labels(frame, bbox, label_id)
-        result = self.sort.update(bboxes)
-        print(result)
+        # 保留bboexs中score大于阈值的结果
+        bboxes = [bbox for bbox in bboxes if bbox[4] >= self.score_threshold]
+        # 使用sort算法对bboxes进行跟踪
+        if len(bboxes) != 0:
+        # print(type(bboxes))
+            result = self.sort.update(bboxes[0])
+            print(result)
         return frame
 
     def set_score_threshold(self, threshold):
