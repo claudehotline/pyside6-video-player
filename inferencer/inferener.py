@@ -10,12 +10,13 @@ class inferencer:
   def __init__(self, model_path, device):
     print('init inferencer')
     self.device = device
-
     self.output = None
 
     if self.device == 'cpu':
       self.model = onnxruntime.InferenceSession(model_path+os.sep+'end2end.onnx')
     elif self.device == 'cuda':
+      # cuda.init()
+      self.cfx = cuda.Device(0).make_context()
       with open(model_path+os.sep+'end2end.engine', "rb") as f:
         engine_data = f.read()
       self.model = trt.Runtime(trt.Logger(trt.Logger.INFO)).deserialize_cuda_engine(engine_data)
@@ -37,17 +38,22 @@ class inferencer:
       ort_outs = self.model.run(None, ort_inputs)
       self.output = ort_outs[0][0]
     elif self.device == 'cuda': 
+      self.cfx.push()
       np.copyto(self.host_in, frame.ravel())
       cuda.memcpy_htod_async(self.device_in, self.host_in, self.stream)
       self.context.execute_async_v2(self.bindings, self.stream.handle)
       cuda.memcpy_dtoh_async(self.host_out, self.device_out, self.stream)
       self.stream.synchronize()
       self.output = self.host_out.reshape(201,18,4)
+      self.cfx.pop()
     return self.output
   
   def __del__(self):
     print('del inferencer')
-    cuda.Context.pop()
+    if self.device == 'cuda':
+      self.device_in.free()
+      self.device_out.free()
+      cuda.Context.pop()
 
 def to_numpy(tensor):
     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()

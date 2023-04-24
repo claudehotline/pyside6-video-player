@@ -24,13 +24,19 @@ class VideoPlayer(QObject):
         self.videoFrameReader = None
         self.videoFrameProcessor = None
         self.is_setting_done = False
+        # self.is_setting_done = True
+        
         self.progress = 0
 
         self.videoFrameReaderThread = QThread()
         self.videoFrameProcessorThread = QThread()
 
+        # self.set_videoFrameReader('video/08.mp4')
+        # self.set_videoFrameDetector('动作理解', ['yolov5s.pt'])
+
     @Slot(str, list, str)
     def set_player(self, detectType, model_list, video_path):
+        print('set_player')
         self.detectType = detectType
         self.model_list = model_list
         self.video_path = video_path
@@ -67,6 +73,7 @@ class VideoPlayer(QObject):
 
     def set_videoFrameDetector(self, detectType, model_list):
         # 创建视频检测器
+        print('set_videoFrameDetector')
         self.videoFrameProcessor = VideoFrameProcessor(detectType, model_list)
         self.videoFrameProcessor.set_frame_buffer(self.frameBuffer)
         # 设置检测器的信号槽
