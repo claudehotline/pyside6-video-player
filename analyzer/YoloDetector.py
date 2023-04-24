@@ -1,6 +1,7 @@
 import cv2
 from mmdeploy_python import Detector
 from analyzer import device
+from utils.sort import Sort
 
 class YoloDetector():
 
@@ -8,6 +9,8 @@ class YoloDetector():
         self.detector = Detector(model_path, device, 0)
 
         self.score_threshold = 0.3
+
+        self.sort = Sort(max_age=30, min_hits=3, iou_threshold=0.3)
 
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)
@@ -21,6 +24,8 @@ class YoloDetector():
                 continue
             # 绘制bounding box 和 label 文本
             self.draw_labels(frame, bbox, label_id)
+        result = self.sort.update(bboxes)
+        print(result)
         return frame
 
     def set_score_threshold(self, threshold):
