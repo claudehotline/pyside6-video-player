@@ -1,16 +1,13 @@
-# from parser import get_config
 from .deep_sort import DeepSort
 import torch
 import cv2
 
 palette = (2 ** 11 - 1, 2 ** 15 - 1, 2 ** 20 - 1)
-# cfg = get_config()
-# cfg.merge_from_file("deep_sort/configs/deep_sort.yaml")
 deepsort = DeepSort('model/tracking/ckpt.t7',
                     max_dist=0.2, min_confidence=0.3,
                     nms_max_overlap=0.5, max_iou_distance=0.7,
                     max_age=70, n_init=3, nn_budget=100,
-                    use_cuda=False)
+                    use_cuda=True)
 
 
 def plot_bboxes(image, bboxes, line_thickness=None):
@@ -50,6 +47,8 @@ def update_tracker(target_detector, image):
             # Adapt detections to deep sort input format
             for x1, y1, x2, y2, _, conf in bboxes:
                 
+                # 下面的代码是为了把人脸框的坐标转换成deepsort需要的格式
+                # 也就是中心点坐标和宽高
                 obj = [
                     int((x1+x2)/2), int((y1+y2)/2),
                     x2-x1, y2-y1
@@ -69,7 +68,7 @@ def update_tracker(target_detector, image):
                     (x1, y1, x2, y2, '', track_id)
                 )
                 
-        print('boxes2draw', bboxes2draw)
+        # print('boxes2draw', bboxes2draw)
         image = plot_bboxes(image, bboxes2draw)
 
         return image, new_faces, face_bboxes

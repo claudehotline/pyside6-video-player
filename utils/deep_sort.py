@@ -21,9 +21,16 @@ class DeepSort(object):
         max_cosine_distance = max_dist
         nn_budget = 100
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
+
+        # 创建一个tracker
         self.tracker = Tracker(metric, max_iou_distance=max_iou_distance, max_age=max_age, n_init=n_init)
 
     def update(self, bbox_xywh, confidences, ori_img):
+        '''
+            bbox_xywh: list of detection bounding boxes in format (cx, cy, w, h)
+            confidences: list of detection confidences
+            ori_img: original image
+        '''
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         features = self._get_features(bbox_xywh, ori_img)
@@ -55,9 +62,9 @@ class DeepSort(object):
 
 
     """
-    TODO:
         Convert bbox from xc_yc_w_h to xtl_ytl_w_h
-    Thanks JieChen91@github.com for reporting this bug!
+        xc_yc_w_h:  x_c: x of center; y_c: y of center; w: width; h: height
+        xtl_ytl_w_h: xtl: x of top left; ytl: y of top left
     """
     @staticmethod
     def _xywh_to_tlwh(bbox_xywh):
