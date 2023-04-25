@@ -6,6 +6,7 @@ from utils.sort import Sort
 class YoloDetector():
 
     def __init__(self, model_path):
+        print('init yolo')
         self.detector = Detector(model_path, device, 0)
 
         self.score_threshold = 0.5

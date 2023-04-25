@@ -15,7 +15,6 @@ from inferencer.inferener import inferencer
 class DeepLaneDetector:
 
     def __init__(self):
-        # self.detector = onnxruntime.InferenceSession('model/lane/ultral-fast/culane_18.onnx')
         self.detector = inferencer('model/lane/ultral-fast', device)
 
         self.row_anchor = culane_row_anchor
@@ -33,12 +32,7 @@ class DeepLaneDetector:
         img_w, img_h = frame.shape[1], frame.shape[0]
         frame = Image.fromarray(frame)
         frame = self.img_transforms(frame).unsqueeze(0)
-        # ort_inputs = {self.detector.get_inputs()[0].name: self.to_numpy(frame)}
-        # ort_outs = self.detector.run(None, ort_inputs)
-        ort_outs = self.detector.infer(frame)
-
-        # ort_outs = ort_outs[0][0]
-
+        ort_outs = self.detector(frame)
         ort_outs = ort_outs[:, ::-1, :]
         prob = scipy.special.softmax(ort_outs[:-1, :, :], axis=0)
         idx = np.arange(200) + 1
