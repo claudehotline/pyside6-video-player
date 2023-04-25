@@ -88,6 +88,7 @@ class VideoFrameProcessor(QObject):
             # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
                 # cv2.imwrite('test.jpg', frame)
+                print('detect frame: ', frame.shape)
                 result = self.detector.detect(frame)
                 self.current_frame = self.current_frame + 1
                 self.update_progress.emit(self.current_frame)

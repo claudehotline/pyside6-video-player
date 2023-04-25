@@ -22,7 +22,7 @@ class baseDet(object):
 
         self.font = cv2.FONT_HERSHEY_SIMPLEX
 
-    def feedCap(self, im, func_status):
+    def detect(self, im):
 
         retDict = {
             'frame': None,
@@ -38,7 +38,7 @@ class baseDet(object):
         retDict['faces'] = faces
         retDict['face_bboxes'] = face_bboxes
 
-        return retDict
+        return retDict['frame']
 
     def init_model(self):
         raise EOFError("Undefined model type.")
@@ -46,5 +46,5 @@ class baseDet(object):
     def preprocess(self):
         raise EOFError("Undefined model type.")
 
-    def detect(self):
+    def getbox(self):
         raise EOFError("Undefined model type.")
