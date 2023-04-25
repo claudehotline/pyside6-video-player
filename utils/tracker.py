@@ -43,12 +43,8 @@ def update_tracker(target_detector, image):
         bboxes2draw = []
         face_bboxes = []
         if len(bboxes):
-
             # Adapt detections to deep sort input format
             for x1, y1, x2, y2, _, conf in bboxes:
-                
-                # 下面的代码是为了把人脸框的坐标转换成deepsort需要的格式
-                # 也就是中心点坐标和宽高
                 obj = [
                     int((x1+x2)/2), int((y1+y2)/2),
                     x2-x1, y2-y1
@@ -68,7 +64,6 @@ def update_tracker(target_detector, image):
                     (x1, y1, x2, y2, '', track_id)
                 )
                 
-        # print('boxes2draw', bboxes2draw)
         image = plot_bboxes(image, bboxes2draw)
 
         return image, new_faces, face_bboxes
