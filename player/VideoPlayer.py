@@ -179,4 +179,5 @@ class VideoPlayer(QObject):
             self.videoFrameProcessor.set_detecting_status(False)
             self.videoFrameProcessorThread.quit()
             self.videoFrameProcessorThread.wait()
+            # del self.videoFrameProcessor
         self.stop.emit()

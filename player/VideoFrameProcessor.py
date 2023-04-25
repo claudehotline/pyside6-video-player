@@ -10,6 +10,7 @@ from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
 # from analyzer.ActionAnalyzer import ActionAnalyzer
 from analyzer.DeepLaneDetector import DeepLaneDetector
+from analyzer.TrackingDetector import TrackingDetector
 
 class VideoFrameProcessor(QObject):
     
@@ -43,7 +44,8 @@ class VideoFrameProcessor(QObject):
         elif detectType == '动作理解':
             # model_path = 'model/detect' + os.path.sep + model_list[0]
             # self.detector = ActionAnalyzer(model_path)
-            self.detector = DeepLaneDetector()
+            # self.detector = DeepLaneDetector()
+            self.detector = TrackingDetector()
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):

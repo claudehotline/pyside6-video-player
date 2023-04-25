@@ -1,7 +1,8 @@
 import cv2
 from mmdeploy_python import Detector
 from analyzer import device
-from utils.sort import Sort
+from utils.sort1 import Sort
+import numpy as np
 
 class YoloDetector():
 
@@ -11,7 +12,10 @@ class YoloDetector():
 
         self.score_threshold = 0.5
 
-        self.sort = Sort(max_age=30, min_hits=3, iou_threshold=0.3)
+        self.sort = Sort(max_age=70, min_hits=3, iou_threshold=0.3)
+
+    def __del__(self):
+        self.sort.trackers = []
 
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)
@@ -26,13 +30,26 @@ class YoloDetector():
             # 绘制bounding box 和 label 文本
             self.draw_labels(frame, bbox, label_id)
         # 保留bboexs中score大于阈值的结果
-        bboxes = [bbox for bbox in bboxes if bbox[4] >= self.score_threshold]
+        # bboxes = [bbox for bbox in bboxes if bbox[4] >= self.score_threshold]
+        # keep = np.logical_and(labels == 0, bboxes[..., 4] > self.score_threshold)
+        # bboxes = bboxes[keep]
         # 使用sort算法对bboxes进行跟踪
-        if len(bboxes) != 0:
-        # print(type(bboxes))
-            result = self.sort.update(bboxes[0])
-            print(result)
-        return frame
+        # print('bboxes = ', np.array(bboxes))
+        # if len(bboxes) != 0:
+        # # print(type(bboxes))
+        #     # result = self.sort.update(np.array(bboxes))
+        #     result = self.sort.update(bboxes)
+        #     for i in range(len(result)):
+        #         print('result = ', result[i])
+        #         [left, top, right, bottom]= result[i][:4].astype(int)
+        #         id = result[i][4]
+        #         print('id = ', int(id))
+        #         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+        #         cv2.putText(frame, str(int(id)), (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        #         # self.draw_labels(frame, result[i][:4].astype(int), result[i][4].astype(int))
+        #     print(result)
+            # self.sort.trackers = []
+        return bboxes, labels
 
     def set_score_threshold(self, threshold):
         self.score_threshold = threshold
