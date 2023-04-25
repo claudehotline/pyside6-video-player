@@ -3,7 +3,7 @@ import numpy as np
 from utils.experimental import attempt_load
 from utils.general import non_max_suppression, scale_coords, letterbox
 from utils.torch_utils import select_device
-from utils.BaseDetector import baseDet
+from analyzer.BaseDetector import baseDet
 from analyzer.YoloDetector import YoloDetector
 
 

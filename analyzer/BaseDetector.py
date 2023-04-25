@@ -1,4 +1,4 @@
-from tracker import update_tracker
+from utils.tracker import update_tracker
 import cv2
 
 
@@ -47,5 +47,5 @@ class baseDet(object):
     def preprocess(self):
         raise EOFError("Undefined model type.")
 
-    def detect(self):
+    def getbox(self):
         raise EOFError("Undefined model type.")
