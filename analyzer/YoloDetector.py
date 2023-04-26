@@ -23,6 +23,10 @@ class YoloDetector():
     
     def getbox(self, frame):
         bboxes, labels, _ = self.detector(frame)
+
+        keep = np.logical_and(labels == 0, bboxes[..., 4] > self.score_threshold)
+        bboxes = bboxes[keep]
+        labels = labels[keep]
         return bboxes, labels
 
     def set_score_threshold(self, threshold):

@@ -6,7 +6,7 @@ class TrackingDetector(baseDet):
 
     def __init__(self):
         super(TrackingDetector, self).__init__()
-        self.model = YoloDetector('model/detect/rtmdet-m')
+        self.model = YoloDetector('model/detect/yolov8s')
         
     def getbox(self, im):
         bboxes, labels = self.model.getbox(im)
