@@ -3,8 +3,8 @@ import cv2
 
 class CarCountDetector(TrackingDetector):
 
-    def __init__(self, model_path, tracking_class=[]):
-        super(CarCountDetector, self).__init__(model_path, tracking_class)
+    def __init__(self, model_path1, model_path2, tracking_class=[]):
+        super(CarCountDetector, self).__init__(model_path1, model_path2, tracking_class)
         self.car_count_up = []
         self.car_count_down = []
     

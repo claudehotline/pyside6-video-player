@@ -33,4 +33,4 @@ class TransportMonitoringWidget(QWidget):
             '.',
             self.file_dialog.setNameFilter('图像文件(*.mp4 *.avi *.mov *.mkv)')
         )
-        self.videoWidget.videoPlayer.set_player('车辆统计', ['yolov8s'], self.video_path)
+        self.videoWidget.videoPlayer.set_player('车辆统计', ['yolov8s_trt', 'ckpt.t7'], self.video_path)

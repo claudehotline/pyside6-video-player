@@ -45,11 +45,13 @@ class VideoFrameProcessor(QObject):
         elif detectType == '动作理解':
             self.detector = ActionAnalyzer()
         elif detectType == '目标追踪':
-            model_path = 'model/detect' + os.path.sep + model_list[0]
-            self.detector = TrackingDetector(model_path, [0])
+            model_path1 = 'model/detect' + os.path.sep + model_list[0]
+            model_path2 = 'model/tracking' + os.path.sep + model_list[1]
+            self.detector = TrackingDetector(model_path1, model_path2, [0])
         elif detectType == '车辆统计':
-            model_path = 'model/detect' + os.path.sep + model_list[0]
-            self.detector = CarCountDetector(model_path, [2])
+            model_path1 = 'model/detect' + os.path.sep + model_list[0]
+            model_path2 = 'model/tracking' + os.path.sep + model_list[1]
+            self.detector = CarCountDetector(model_path1, model_path2, [2])
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):
