@@ -5,9 +5,10 @@ import numpy as np
 
 class YoloDetector():
 
-    def __init__(self, model_path):
+    def __init__(self, model_path, detect_labels=[]):
         self.detector = Detector(model_path, device, 0)
         self.score_threshold = 0.5
+        self.detect_labels = detect_labels
 
     def detect(self, frame):
         bboxes, labels, _ = self.detector(frame)
@@ -24,9 +25,14 @@ class YoloDetector():
     def getbox(self, frame):
         bboxes, labels, _ = self.detector(frame)
 
-        keep = np.logical_and(labels == 0, bboxes[..., 4] > self.score_threshold)
-        bboxes = bboxes[keep]
-        labels = labels[keep]
+        if len(self.detect_labels) != 0:
+            keep = np.logical_and(labels == self.detect_labels[0], bboxes[..., 4] > self.score_threshold)
+            bboxes = bboxes[keep]
+            labels = labels[keep]
+        else:
+            keep = np.logical_and(bboxes[..., 4] > self.score_threshold)
+            bboxes = bboxes[keep]
+            labels = labels[keep]
         return bboxes, labels
 
     def set_score_threshold(self, threshold):

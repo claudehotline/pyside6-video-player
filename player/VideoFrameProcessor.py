@@ -8,7 +8,7 @@ import os
 from analyzer.YoloDetector import YoloDetector
 from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
-# from analyzer.ActionAnalyzer import ActionAnalyzer
+from analyzer.ActionAnalyzer import ActionAnalyzer
 from analyzer.DeepLaneDetector import DeepLaneDetector
 from analyzer.TrackingDetector import TrackingDetector
 
@@ -42,10 +42,10 @@ class VideoFrameProcessor(QObject):
             model_path2 = 'model/pose' + os.path.sep + model_list[1]
             self.detector = PoseDetect(model_path1, model_path2)
         elif detectType == '动作理解':
-            # model_path = 'model/detect' + os.path.sep + model_list[0]
-            # self.detector = ActionAnalyzer(model_path)
-            # self.detector = DeepLaneDetector()
-            self.detector = TrackingDetector()
+            self.detector = ActionAnalyzer()
+        elif detectType == '目标追踪':
+            model_path = 'model/detect' + os.path.sep + model_list[0]
+            self.detector = TrackingDetector(model_path, [2])
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):
@@ -85,10 +85,7 @@ class VideoFrameProcessor(QObject):
             frame = self.frame_buffer.get_frame()
             if self.frame_buffer.get_buffer_length() < 100:
                 self.start_decoding.emit()
-            # print(self.frame_buffer.get_buffer_length(), self.is_decoding_finished)
             if frame is not None:
-                # cv2.imwrite('test.jpg', frame)
-                # print('detect frame: ', frame.shape)
                 result = self.detector.detect(frame)
                 self.current_frame = self.current_frame + 1
                 self.update_progress.emit(self.current_frame)
@@ -101,7 +98,6 @@ class VideoFrameProcessor(QObject):
                     
                 cv2.putText(result, "FPS: {:.2f}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-                # print('emit result')
                 self.result.emit(result)
             if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
                 print('视频处理结束')

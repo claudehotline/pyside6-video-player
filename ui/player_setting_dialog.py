@@ -73,10 +73,12 @@ class Ui_Dialog(object):
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.poseRecognition = QRadioButton(self.frame_2)
-        self.poseRecognition.setObjectName(u"poseRecognition")
+        self.detection = QRadioButton(self.frame_2)
+        self.detection.setObjectName(u"detection")
+        sizePolicy.setHeightForWidth(self.detection.sizePolicy().hasHeightForWidth())
+        self.detection.setSizePolicy(sizePolicy)
 
-        self.gridLayout.addWidget(self.poseRecognition, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.detection, 0, 0, 1, 1)
 
         self.segmentation = QRadioButton(self.frame_2)
         self.segmentation.setObjectName(u"segmentation")
@@ -88,17 +90,24 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.segmentation, 0, 1, 1, 1)
 
+        self.poseRecognition = QRadioButton(self.frame_2)
+        self.poseRecognition.setObjectName(u"poseRecognition")
+
+        self.gridLayout.addWidget(self.poseRecognition, 0, 2, 1, 1)
+
+        self.tracking = QRadioButton(self.frame_2)
+        self.tracking.setObjectName(u"tracking")
+        sizePolicy1.setHeightForWidth(self.tracking.sizePolicy().hasHeightForWidth())
+        self.tracking.setSizePolicy(sizePolicy1)
+
+        self.gridLayout.addWidget(self.tracking, 1, 1, 1, 1)
+
         self.actionRecognition = QRadioButton(self.frame_2)
         self.actionRecognition.setObjectName(u"actionRecognition")
+        sizePolicy.setHeightForWidth(self.actionRecognition.sizePolicy().hasHeightForWidth())
+        self.actionRecognition.setSizePolicy(sizePolicy)
 
-        self.gridLayout.addWidget(self.actionRecognition, 1, 0, 1, 3)
-
-        self.detection = QRadioButton(self.frame_2)
-        self.detection.setObjectName(u"detection")
-        sizePolicy.setHeightForWidth(self.detection.sizePolicy().hasHeightForWidth())
-        self.detection.setSizePolicy(sizePolicy)
-
-        self.gridLayout.addWidget(self.detection, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.actionRecognition, 1, 0, 1, 1)
 
 
         self.horizontalLayout.addWidget(self.frame_2)
@@ -234,10 +243,11 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"\u6a21\u578b\u8bbe\u7f6e", None))
         self.detectType.setText(QCoreApplication.translate("Dialog", u"\u68c0\u6d4b\u7c7b\u522b", None))
-        self.poseRecognition.setText(QCoreApplication.translate("Dialog", u"\u59ff\u6001\u8bc6\u522b", None))
-        self.segmentation.setText(QCoreApplication.translate("Dialog", u"\u8bed\u4e49\u5206\u5272", None))
-        self.actionRecognition.setText(QCoreApplication.translate("Dialog", u"\u52a8\u4f5c\u7406\u89e3", None))
         self.detection.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u68c0\u6d4b", None))
+        self.segmentation.setText(QCoreApplication.translate("Dialog", u"\u8bed\u4e49\u5206\u5272", None))
+        self.poseRecognition.setText(QCoreApplication.translate("Dialog", u"\u59ff\u6001\u8bc6\u522b", None))
+        self.tracking.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u8ffd\u8e2a", None))
+        self.actionRecognition.setText(QCoreApplication.translate("Dialog", u"\u52a8\u4f5c\u7406\u89e3", None))
         self.model1Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))
         self.model2Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"\u89c6\u9891\u8bbe\u7f6e", None))

@@ -53,6 +53,12 @@ class SingleVideoPlayerWidget(QWidget):
         # 连接信号槽
         self.videoPlayer.update_progress_bar.connect(lambda value: self.set_progress(value, self.slide_bar))
 
+    def set_setting_btn_visibility(self, visible):
+        if visible:
+            self.video_dialog_button.show()
+        else:
+            self.video_dialog_button.hide()
+
     @Slot()
     def show_player_setting_dialog(self):
         self.player_setting_dialog = PlayerSettingDialog()

@@ -28,6 +28,8 @@ class PlayerSettingDialog(QWidget):
         self.pose_radio_button.toggled.connect(self.pose_radio_button_toggled)
         self.action_radio_button = self.ui.actionRecognition
         self.action_radio_button.toggled.connect(self.action_radio_button_toggled)
+        self.tracking_radio_button = self.ui.tracking
+        self.tracking_radio_button.toggled.connect(self.tracking_radio_button_toggled)
 
         # 模型选择器
         self.model1_selector = self.ui.model1
@@ -89,6 +91,15 @@ class PlayerSettingDialog(QWidget):
         self.model2_selector.clear()
         self.model2_selector.addItems(self.model2_list)
         self.detectType = self.action_radio_button.text()
+
+    def tracking_radio_button_toggled(self):
+        self.model1_list = os.listdir('model/detect')
+        self.model1_selector.clear()
+        self.model1_selector.addItems(self.model1_list)
+        self.model2_list = os.listdir('model/tracking')
+        self.model2_selector.clear()
+        self.model2_selector.addItems(self.model2_list)
+        self.detectType = self.tracking_radio_button.text()
 
     def local_video_file_radio_button_toggled(self):
         self.local_cam_selector.setDisabled(True)

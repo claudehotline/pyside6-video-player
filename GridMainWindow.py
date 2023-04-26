@@ -1,11 +1,12 @@
-from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
-from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 import sys
 import os
+
 from ui.grid_main import Ui_MainWindow
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve
-
+from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
+from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 from widgets.VsrAnalysisWidget import VsrAnalysisWidget
+from widgets.TransportMonitoringWidget import TransportMonitoringWidget
 
 class MainWindow(QMainWindow):
     
@@ -18,6 +19,8 @@ class MainWindow(QMainWindow):
     # 获取stackedWidget
     self.stack_widget = self.ui.stackedWidget
     self.stack_widget.setContentsMargins(0, 0, 0, 0)
+    # 设置stackedWidget当前页面为homePage
+    self.ui.stackedWidget.setCurrentWidget(self.ui.page)
 
     # 设置 page1 为视频播放页面
     self.playerPage = self.ui.page
@@ -32,6 +35,13 @@ class MainWindow(QMainWindow):
     self.horizontalLayout.setSpacing(1)
     vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
     self.horizontalLayout.addWidget(vsrAnalysisWidget)
+
+    # 设置 page3 为交通监控页面
+    self.traffic_page = self.ui.page_3
+    self.traffic_page.setLayout(QHBoxLayout())
+    self.traffic_page.layout().setContentsMargins(0, 0, 0, 0)
+    transportMonitoringWidget = TransportMonitoringWidget(self.traffic_page)
+    self.traffic_page.layout().addWidget(transportMonitoringWidget)
 
     # 获取menuBar
     self.menuBar = self.ui.menubar
@@ -94,12 +104,11 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page)
     if btnName == "test1_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_2)
-    print(f'Button "{btnName}" pressed!')
+    if btnName == "test2_btn":
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_3)
 
   def expanding_menu(self):
-    print('expanding_menu')
     width = self.ui.frame.width()
-    print('width: ', width)
     maxExtend = 200
     standard = 60
 
@@ -117,9 +126,7 @@ class MainWindow(QMainWindow):
     self.animation.start()
 
   def bottom_expand_btn_click(self):
-    print('bottom_expand_btn_click')
     width = self.ui.expand.width()
-    print('width: ', width)
     maxExtend = 200
     standard = 0
 
@@ -139,7 +146,6 @@ class MainWindow(QMainWindow):
   def resizeEvent(self, event):
     # 获取vsr_page 中label的控件
     self.label = self.vsr_page.findChild(QLabel, "label")
-    print(self.label.geometry())
 
   def closeEvent(self, event):
     event.accept()

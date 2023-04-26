@@ -9,6 +9,9 @@ deepsort = DeepSort('model/tracking/ckpt.t7',
                     max_age=70, n_init=3, nn_budget=100,
                     use_cuda=True)
 
+car_count_up = []
+car_count_down = []
+count_line_height = 110
 
 def plot_bboxes(image, bboxes, line_thickness=None):
     # Plots one bounding box on image img
@@ -31,7 +34,6 @@ def plot_bboxes(image, bboxes, line_thickness=None):
                     [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
     return image
-
 
 def update_tracker(target_detector, image):
 
@@ -58,12 +60,35 @@ def update_tracker(target_detector, image):
             # Pass detections to deepsort
             outputs = deepsort.update(xywhs, confss, image)
 
+
             for value in list(outputs):
                 x1,y1,x2,y2,track_id = value
                 bboxes2draw.append(
                     (x1, y1, x2, y2, '', track_id)
                 )
-                
+                cx = int((x1+x2)/2)
+                cy = int((y1+y2)/2)
+
+                # 在image上画出cx,cy
+                cv2.circle(image, (cx, cy), 2, (0, 0, 255), 2, cv2.FILLED)
+
+                if cx > 360 and cy >count_line_height - 20 and cy < count_line_height + 20:
+                    if track_id not in car_count_up:
+                        car_count_up.append(track_id)
+
+                if cx <= 360 and cy >count_line_height - 20 and cy < count_line_height + 20:
+                    if track_id not in car_count_down:
+                        car_count_down.append(track_id)
+            
+        # opencv 画直线
+        # img_h = image.shape[0]
+        img_w = image.shape[1]
+        cv2.line(image, (0, 120), (img_w, 120), (255, 0, 0), 2)
+        # cv2.line(image, (360, 0), (360, img_h), (255, 0, 0), 2)
+
+        cv2.putText(image, 'up: {}'.format(len(car_count_up)), (10, 200), 0, 5, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)
+        cv2.putText(image, 'dwon: {}'.format(len(car_count_down)), (10, 300), 0, 5, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)
+
         image = plot_bboxes(image, bboxes2draw)
 
         return image, new_faces, face_bboxes

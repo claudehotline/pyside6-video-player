@@ -1,28 +1,28 @@
-from utils.tracker import update_tracker
+# from utils.tracker import update_tracker
 
 
-class baseDet(object):
+# class baseDet(object):
 
-    def __init__(self):
-        self.frameCounter = 0
+#     def __init__(self):
+#         self.frameCounter = 0
 
-    def detect(self, im):
+#     def detect(self, im):
 
-        retDict = {
-            'frame': None,
-            'faces': None,
-            'list_of_ids': None,
-            'face_bboxes': []
-        }
-        self.frameCounter += 1
+#         retDict = {
+#             'frame': None,
+#             'faces': None,
+#             'list_of_ids': None,
+#             'face_bboxes': []
+#         }
+#         self.frameCounter += 1
 
-        im, faces, face_bboxes = update_tracker(self, im)
+#         im, faces, face_bboxes = update_tracker(self, im)
 
-        retDict['frame'] = im
-        retDict['faces'] = faces
-        retDict['face_bboxes'] = face_bboxes
+#         retDict['frame'] = im
+#         retDict['faces'] = faces
+#         retDict['face_bboxes'] = face_bboxes
 
-        return retDict['frame']
+#         return retDict['frame']
 
-    def getbox(self):
-        raise EOFError("Undefined model type.")
+#     def getbox(self):
+#         raise EOFError("Undefined model type.")
