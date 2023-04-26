@@ -11,6 +11,7 @@ from analyzer.PoseDetector import PoseDetect
 from analyzer.ActionAnalyzer import ActionAnalyzer
 from analyzer.DeepLaneDetector import DeepLaneDetector
 from analyzer.TrackingDetector import TrackingDetector
+from analyzer.CarCountDetector import CarCountDetector
 
 class VideoFrameProcessor(QObject):
     
@@ -45,7 +46,10 @@ class VideoFrameProcessor(QObject):
             self.detector = ActionAnalyzer()
         elif detectType == '目标追踪':
             model_path = 'model/detect' + os.path.sep + model_list[0]
-            self.detector = TrackingDetector(model_path, [2])
+            self.detector = TrackingDetector(model_path, [0])
+        elif detectType == '车辆统计':
+            model_path = 'model/detect' + os.path.sep + model_list[0]
+            self.detector = CarCountDetector(model_path, [2])
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):

@@ -1,6 +1,5 @@
 from .deep_sort import DeepSort
 import torch
-import cv2
 
 palette = (2 ** 11 - 1, 2 ** 15 - 1, 2 ** 20 - 1)
 deepsort = DeepSort('model/tracking/ckpt.t7',
@@ -9,41 +8,37 @@ deepsort = DeepSort('model/tracking/ckpt.t7',
                     max_age=70, n_init=3, nn_budget=100,
                     use_cuda=True)
 
-car_count_up = []
-car_count_down = []
-count_line_height = 110
+# car_count_up = []
+# car_count_down = []
+# count_line_height = 110
 
-def plot_bboxes(image, bboxes, line_thickness=None):
-    # Plots one bounding box on image img
-    tl = line_thickness or round(
-        0.002 * (image.shape[0] + image.shape[1]) / 2) + 1  # line/font thickness
-    for (x1, y1, x2, y2, cls_id, pos_id) in bboxes:
-        if cls_id in ['smoke', 'phone', 'eat']:
-            color = (0, 0, 255)
-        else:
-            color = (0, 255, 0)
-        if cls_id == 'eat':
-            cls_id = 'eat-drink'
-        c1, c2 = (x1, y1), (x2, y2)
-        cv2.rectangle(image, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
-        tf = max(tl - 1, 1)  # font thickness
-        t_size = cv2.getTextSize(cls_id, 0, fontScale=tl / 3, thickness=tf)[0]
-        c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
-        cv2.rectangle(image, c1, c2, color, -1, cv2.LINE_AA)  # filled
-        cv2.putText(image, '{} ID-{}'.format(cls_id, pos_id), (c1[0], c1[1] - 2), 0, tl / 3,
-                    [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+# def plot_bboxes(image, bboxes, line_thickness=None):
+#     # Plots one bounding box on image img
+#     tl = line_thickness or round(
+#         0.002 * (image.shape[0] + image.shape[1]) / 2) + 1  # line/font thickness
+#     for (x1, y1, x2, y2, cls_id, pos_id) in bboxes:
+#         if cls_id in ['smoke', 'phone', 'eat']:
+#             color = (0, 0, 255)
+#         else:
+#             color = (0, 255, 0)
+#         if cls_id == 'eat':
+#             cls_id = 'eat-drink'
+#         c1, c2 = (x1, y1), (x2, y2)
+#         cv2.rectangle(image, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
+#         tf = max(tl - 1, 1)  # font thickness
+#         t_size = cv2.getTextSize(cls_id, 0, fontScale=tl / 3, thickness=tf)[0]
+#         c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
+#         cv2.rectangle(image, c1, c2, color, -1, cv2.LINE_AA)  # filled
+#         cv2.putText(image, '{} ID-{}'.format(cls_id, pos_id), (c1[0], c1[1] - 2), 0, tl / 3,
+#                     [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
-    return image
+#     return image
 
 def update_tracker(target_detector, image):
-
-        new_faces = []
         _, bboxes = target_detector.getbox(image)
-
         bbox_xywh = []
         confs = []
         bboxes2draw = []
-        face_bboxes = []
         if len(bboxes):
             # Adapt detections to deep sort input format
             for x1, y1, x2, y2, _, conf in bboxes:
@@ -60,35 +55,10 @@ def update_tracker(target_detector, image):
             # Pass detections to deepsort
             outputs = deepsort.update(xywhs, confss, image)
 
-
             for value in list(outputs):
                 x1,y1,x2,y2,track_id = value
                 bboxes2draw.append(
                     (x1, y1, x2, y2, '', track_id)
                 )
-                cx = int((x1+x2)/2)
-                cy = int((y1+y2)/2)
 
-                # 在image上画出cx,cy
-                cv2.circle(image, (cx, cy), 2, (0, 0, 255), 2, cv2.FILLED)
-
-                if cx > 360 and cy >count_line_height - 20 and cy < count_line_height + 20:
-                    if track_id not in car_count_up:
-                        car_count_up.append(track_id)
-
-                if cx <= 360 and cy >count_line_height - 20 and cy < count_line_height + 20:
-                    if track_id not in car_count_down:
-                        car_count_down.append(track_id)
-            
-        # opencv 画直线
-        # img_h = image.shape[0]
-        img_w = image.shape[1]
-        cv2.line(image, (0, 120), (img_w, 120), (255, 0, 0), 2)
-        # cv2.line(image, (360, 0), (360, img_h), (255, 0, 0), 2)
-
-        cv2.putText(image, 'up: {}'.format(len(car_count_up)), (10, 200), 0, 5, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)
-        cv2.putText(image, 'dwon: {}'.format(len(car_count_down)), (10, 300), 0, 5, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)
-
-        image = plot_bboxes(image, bboxes2draw)
-
-        return image, new_faces, face_bboxes
+        return bboxes2draw
