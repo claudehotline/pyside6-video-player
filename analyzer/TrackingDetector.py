@@ -2,7 +2,6 @@ import numpy as np
 import torch
 from analyzer.YoloDetector import YoloDetector
 from utils.deep_sort import DeepSort
-# from utils.tracker import update_tracker
 import cv2
 
 class TrackingDetector:
