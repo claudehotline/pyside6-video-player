@@ -84,8 +84,8 @@ class CarCountDetector(TrackingDetector):
                 license = single_car[y1:y2,x1:x2]
                 cv2.imwrite('license.jpg', license)
                 model_inputs, _ = self.task_processor.create_input(license, self.input_shape)
-                texts = self.text_recognizer.test_step(model_inputs)
-                print(texts)
+                result = self.text_recognizer.test_step(model_inputs)
+                print(result[0].pred_text.item)
 
             # 统计上行车辆的数量
             if cx > 360 and cy >count_line_height - 20 and cy < count_line_height + 20:
