@@ -71,15 +71,16 @@ class KalmanFilter(object):
         """
         mean_pos = measurement
         mean_vel = np.zeros_like(mean_pos)
+        # [x, y, a, h, vx, vy, va, vh]
         mean = np.r_[mean_pos, mean_vel]
 
         std = [
-            2 * self._std_weight_position * measurement[3],
-            2 * self._std_weight_position * measurement[3],
+            2 * self._std_weight_position * measurement[0],
+            2 * self._std_weight_position * measurement[1],
             1e-2,
             2 * self._std_weight_position * measurement[3],
-            10 * self._std_weight_velocity * measurement[3],
-            10 * self._std_weight_velocity * measurement[3],
+            10 * self._std_weight_velocity * measurement[0],
+            10 * self._std_weight_velocity * measurement[1],
             1e-5,
             10 * self._std_weight_velocity * measurement[3]]
         covariance = np.diag(np.square(std))
@@ -105,18 +106,21 @@ class KalmanFilter(object):
 
         """
         std_pos = [
-            self._std_weight_position * mean[3],
-            self._std_weight_position * mean[3],
+            self._std_weight_position * mean[0],
+            self._std_weight_position * mean[1],
             1e-2,
             self._std_weight_position * mean[3]]
         std_vel = [
-            self._std_weight_velocity * mean[3],
-            self._std_weight_velocity * mean[3],
+            self._std_weight_velocity * mean[0],
+            self._std_weight_velocity * mean[1],
             1e-5,
             self._std_weight_velocity * mean[3]]
         motion_cov = np.diag(np.square(np.r_[std_pos, std_vel]))
 
+        # x(t+1) = F(t)*x(t)
         mean = np.dot(self._motion_mat, mean)
+        # P(t+1) = F(t)*P(t)*F(t)^T + Q(t)
+        # Q(t) = motion_cov
         covariance = np.linalg.multi_dot((
             self._motion_mat, covariance, self._motion_mat.T)) + motion_cov
 
@@ -146,9 +150,11 @@ class KalmanFilter(object):
             self._std_weight_position * mean[3]]
         innovation_cov = np.diag(np.square(std))
 
+        # 只观测位置
         mean = np.dot(self._update_mat, mean)
         covariance = np.linalg.multi_dot((
             self._update_mat, covariance, self._update_mat.T))
+        # 传感器噪声
         return mean, covariance + innovation_cov
 
     def update(self, mean, covariance, measurement):
@@ -171,18 +177,30 @@ class KalmanFilter(object):
             Returns the measurement-corrected state distribution.
 
         """
+        # 转换至yolo向量空间（x,y,a,h）
         projected_mean, projected_cov = self.project(mean, covariance)
 
+        # projected_cov = H*P*H^T + R
         chol_factor, lower = scipy.linalg.cho_factor(
             projected_cov, lower=True, check_finite=False)
+        # scipy.linalg.cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True)
+        # Solve the linear equations A x = b, given the Cholesky factorization of A.
+        # b = np.dot(covariance, self._update_mat.T).T
+        # c_and_lower = (chol_factor, lower)
+        # kalman_gain * projected_cov = P*H^T
         kalman_gain = scipy.linalg.cho_solve(
             (chol_factor, lower), np.dot(covariance, self._update_mat.T).T,
             check_finite=False).T
+        
+        # z - H*x
         innovation = measurement - projected_mean
-
+        # x = x + kalman_gain * (z - H*x)
         new_mean = mean + np.dot(innovation, kalman_gain.T)
+        # P = P - kalman_gain * H * P
         new_covariance = covariance - np.linalg.multi_dot((
             kalman_gain, projected_cov, kalman_gain.T))
+        # new_covariance = covariance - np.linalg.multi_dot((
+        #     kalman_gain, projected_cov, kalman_gain.T))
         return new_mean, new_covariance
 
     def gating_distance(self, mean, covariance, measurements,
