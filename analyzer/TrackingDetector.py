@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from analyzer.YoloDetector import YoloDetector
 from utils.deep_sort import DeepSort
+from utils.bytetrack.byte_tracker import ByteTracker
 import cv2
 
 class TrackingDetector:
@@ -15,13 +16,18 @@ class TrackingDetector:
                     nms_max_overlap=0.5, max_iou_distance=0.7,
                     max_age=70, n_init=3, nn_budget=100,
                     use_cuda=True)
+        
+        self.tracker = ByteTracker()
 
         self.frameCounter = 0
     
     def detect(self, frame):
         self.frameCounter += 1
-        bboxes2draw = self.update_tracker(frame)
-        self.drawbox(frame, bboxes2draw)
+        dets = self.model(frame)
+        print(dets)
+        self.tracker.update(dets, (frame.shape[1], frame.shape[0]), (frame.shape[1], frame.shape[0]))
+        # bboxes2draw = self.update_tracker(frame)
+        # self.drawbox(frame, bboxes2draw)
         return frame
     
     def update_tracker(self, image):
