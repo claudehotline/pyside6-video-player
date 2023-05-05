@@ -9,9 +9,9 @@ from analyzer.YoloDetector import YoloDetector
 from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
 from analyzer.ActionAnalyzer import ActionAnalyzer
-from analyzer.DeepLaneDetector import DeepLaneDetector
+from analyzer.transport.DeepLaneDetector import DeepLaneDetector
 from analyzer.TrackingDetector import TrackingDetector
-from analyzer.CarCountDetector import CarCountDetector
+from analyzer.transport.CarCountDetector import CarCountDetector
 
 class VideoFrameProcessor(QObject):
     
