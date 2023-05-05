@@ -3,6 +3,8 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QWidget, QApplication
 from ui.single_video_player_widget import Ui_Form
 from widgets.PlayerSettingDialog import PlayerSettingDialog
+from player.VideoPlayer import VideoPlayer
+from player.TransportVideoPlayer import TransportVideoPlayer
 
 
 class SingleVideoPlayerWidget(QWidget):
@@ -28,18 +30,27 @@ class SingleVideoPlayerWidget(QWidget):
         self.play_button = self.ui.playButton
         self.play_button.clicked.connect(self.play)
 
-        self.videoPlayer = VideoPlayer()
-        self.videoPlayer_thread = QThread()
-        self.begin.connect(self.videoPlayer.playVideo)
-        self.videoPlayer.moveToThread(self.videoPlayer_thread)
-        self.videoPlayer_thread.start()
+        # self.videoPlayer = VideoPlayer()
+        # self.videoPlayer = TransportVideoPlayer()
+        self.videoPlayer = None
+        self.videoPlayer_thread = None
+        # self.begin.connect(self.videoPlayer.playVideo)
+        # self.videoPlayer.moveToThread(self.videoPlayer_thread)
+        # self.videoPlayer_thread.start()
 
 
     def show_player_setting_dialog(self):
         self.player_setting_dialog = PlayerSettingDialog()
         self.player_setting_dialog.show()
         self.player_setting_dialog.settings.connect(lambda detectType, model_list, video_path: self.videoPlayer.set_player(detectType, model_list, video_path))
-    
+
+
+    def set_video_player(self, videoPlayer):
+        self.videoPlayer = videoPlayer
+        self.videoPlayer_thread = QThread()
+        self.begin.connect(self.videoPlayer.playVideo)
+        self.videoPlayer.moveToThread(self.videoPlayer_thread)
+        self.videoPlayer_thread.start()
 
     def set_frame(self):
         self.videoPlayer.set_play_status(True)

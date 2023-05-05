@@ -16,6 +16,7 @@ class VideoPlayer(QObject):
     start_decode = Signal()
     update_progress_bar = Signal(int)
     stop = Signal()
+    # send_car_count = Signal(int, int)
 
     def __init__(self):
         QObject.__init__(self)
@@ -83,6 +84,7 @@ class VideoPlayer(QObject):
         self.set_frame_num.connect(lambda x:self.videoFrameProcessor.set_frame_num(x))
         self.videoFrameReader.decoding_finished.connect(self.send_decoding_finished_to_process)
         self.videoFrameProcessor.start_decoding.connect(self.start_decoding)
+        # self.videoFrameProcessor.detector.car_count.connect(lambda up, down: self.update_car_count(up, down))
         # 设置检测器线程
         self.videoFrameProcessor.moveToThread(self.videoFrameProcessorThread)
 

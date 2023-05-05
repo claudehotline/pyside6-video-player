@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QGridLayout
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
-
+from player.VideoPlayer import VideoPlayer
 
 class VideoPlayerTableWidget(QWidget):
     
@@ -17,6 +17,7 @@ class VideoPlayerTableWidget(QWidget):
         self.videoPlayerWidgetList = []
         for i in range(self.row * self.col):
           self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+          self.videoPlayerWidget.set_video_player(VideoPlayer())
           self.videoPlayerWidget.setContentsMargins(0, 0, 0, 0)
           self.grid.addWidget(self.videoPlayerWidget, i//self.row, i%self.col)
           self.videoPlayerWidgetList.append(self.videoPlayerWidget)
@@ -31,6 +32,7 @@ class VideoPlayerTableWidget(QWidget):
 
       for i in range(row * col):
         self.videoPlayerWidget = SingleVideoPlayerWidget(self)
+        self.videoPlayerWidget.set_video_player(VideoPlayer())
         self.grid.addWidget(self.videoPlayerWidget, i//row, i%col)
         self.videoPlayerWidgetList.append(self.videoPlayerWidget)
 

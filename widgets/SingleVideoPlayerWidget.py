@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QWidget, QProgressBar, QLabel
 from ui.single_video_player_widget import Ui_Form
 
 from player.VideoPlayer import VideoPlayer
+from player.TransportVideoPlayer import TransportVideoPlayer
 from widgets.PlayerSettingDialog import PlayerSettingDialog
 
 import numpy as np
@@ -39,7 +40,24 @@ class SingleVideoPlayerWidget(QWidget):
         self.stop_button = self.ui.stopButton
 
         # 创建播放器对象
-        self.videoPlayer = VideoPlayer()
+        self.videoPlayer = None
+        # self.videoPlayer = TransportVideoPlayer()
+        # print('Transport videoPlayer')
+        # self.stop_button.clicked.connect(self.videoPlayer.release)
+        # self.videoPlayer.stop.connect(self.stop)
+
+        # # 创建播放器线程
+        # self.videoPlayer_thread = QThread()
+        # self.begin.connect(self.videoPlayer.playVideo)
+        # self.videoPlayer.moveToThread(self.videoPlayer_thread)
+        # # 启动播放器线程
+        # self.videoPlayer_thread.start()
+
+        # # 连接信号槽
+        # self.videoPlayer.update_progress_bar.connect(lambda value: self.set_progress(value, self.slide_bar))
+
+    def set_video_player(self, videoPlayer):
+        self.videoPlayer = videoPlayer
         self.stop_button.clicked.connect(self.videoPlayer.release)
         self.videoPlayer.stop.connect(self.stop)
 

@@ -107,6 +107,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.test2_btn)
 
+        self.lane_btn = QPushButton(self.top_menu)
+        self.lane_btn.setObjectName(u"lane_btn")
+        self.lane_btn.setMinimumSize(QSize(60, 45))
+
+        self.verticalLayout_3.addWidget(self.lane_btn)
+
 
         self.verticalLayout.addWidget(self.top_menu, 0, Qt.AlignTop)
 
@@ -277,10 +283,13 @@ class Ui_MainWindow(object):
         self.action1x1.setText(QCoreApplication.translate("MainWindow", u"1x1", None))
         self.action2x2.setText(QCoreApplication.translate("MainWindow", u"2x2", None))
         self.action4x4.setText(QCoreApplication.translate("MainWindow", u"4x4", None))
-        self.togglebtn.setText(QCoreApplication.translate("MainWindow", u"exp", None))
-        self.home_btn.setText(QCoreApplication.translate("MainWindow", u"home", None))
-        self.test1_btn.setText(QCoreApplication.translate("MainWindow", u"test1", None))
-        self.test2_btn.setText(QCoreApplication.translate("MainWindow", u"test2", None))
+        self.togglebtn.setText(QCoreApplication.translate("MainWindow", u"\u5c55\u5f00", None))
+        self.home_btn.setText(QCoreApplication.translate("MainWindow", u"\u901a\u7528\u5206\u6790\n"
+"\u6a21\u578b", None))
+        self.test1_btn.setText(QCoreApplication.translate("MainWindow", u"\u8d85\u5206\u8fa8\u7387", None))
+        self.test2_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u6d41\u91cf\n"
+"\u7edf\u8ba1", None))
+        self.lane_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u8f86\u8bc6\u522b", None))
         self.bottomExpbtn.setText(QCoreApplication.translate("MainWindow", u"push", None))
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"setting", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"score\u9608\u503c\uff1a", None))

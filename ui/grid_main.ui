@@ -126,7 +126,7 @@
              </size>
             </property>
             <property name="text">
-             <string>exp</string>
+             <string>展开</string>
             </property>
            </widget>
           </item>
@@ -172,7 +172,8 @@
              </size>
             </property>
             <property name="text">
-             <string>home</string>
+             <string>通用分析
+模型</string>
             </property>
            </widget>
           </item>
@@ -185,7 +186,7 @@
              </size>
             </property>
             <property name="text">
-             <string>test1</string>
+             <string>超分辨率</string>
             </property>
            </widget>
           </item>
@@ -198,7 +199,21 @@
              </size>
             </property>
             <property name="text">
-             <string>test2</string>
+             <string>车流量
+统计</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="lane_btn">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>车辆识别</string>
             </property>
            </widget>
           </item>
