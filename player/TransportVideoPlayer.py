@@ -30,5 +30,5 @@ class TransportVideoPlayer(VideoPlayer):
     def update_car_count(self, up_count, down_count):
         self.up_count = up_count
         self.down_count = down_count
-        print('up_count: ', up_count, 'down_count: ', down_count)
+        # print('up_count: ', up_count, 'down_count: ', down_count)
         self.send_car_count.emit(self.up_count, self.down_count)

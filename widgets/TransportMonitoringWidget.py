@@ -26,7 +26,7 @@ class TransportMonitoringWidget(QWidget):
         self.videoWidget.set_video_player(TransportVideoPlayer())
         self.videoFrame.layout().addWidget(self.videoWidget)
         self.videoWidget.set_setting_btn_visibility(False)
-        # self.videoWidget.videoPlayer.send_car_count.connect(lambda up, down:self.update_car_count(up, down))
+        self.videoWidget.videoPlayer.send_car_count.connect(lambda up, down:self.update_car_count(up, down))
 
         # 车辆统计标签
         self.upCarCountLabel = self.ui.upCarCountLabel
