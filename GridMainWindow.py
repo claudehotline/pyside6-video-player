@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLa
 from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 from widgets.VsrAnalysisWidget import VsrAnalysisWidget
 from widgets.TransportMonitoringWidget import TransportMonitoringWidget
+from widgets.CarRecognitionWidget import CarRecognitionWidget
 
 class MainWindow(QMainWindow):
     
@@ -36,12 +37,19 @@ class MainWindow(QMainWindow):
     vsrAnalysisWidget = VsrAnalysisWidget(self.vsr_page)
     self.horizontalLayout.addWidget(vsrAnalysisWidget)
 
-    # 设置 page3 为交通监控页面
+    # 设置 page3 为车流量统计页面
     self.traffic_page = self.ui.page_3
     self.traffic_page.setLayout(QHBoxLayout())
     self.traffic_page.layout().setContentsMargins(0, 0, 0, 0)
     transportMonitoringWidget = TransportMonitoringWidget(self.traffic_page)
     self.traffic_page.layout().addWidget(transportMonitoringWidget)
+
+    # 设置 page4 为车辆识别页面
+    self.car_recognition_page = self.ui.page_4
+    self.car_recognition_page.setLayout(QHBoxLayout())
+    self.car_recognition_page.layout().setContentsMargins(0, 0, 0, 0)
+    carRecognitionWidget = CarRecognitionWidget(self.car_recognition_page)
+    self.car_recognition_page.layout().addWidget(carRecognitionWidget)
 
     # 获取menuBar
     self.menuBar = self.ui.menubar
@@ -77,6 +85,8 @@ class MainWindow(QMainWindow):
     self.test1_btn.clicked.connect(self.menuButtonClick)
     self.test2_btn = self.ui.test2_btn
     self.test2_btn.clicked.connect(self.menuButtonClick)
+    self.lane_btn = self.ui.lane_btn
+    self.lane_btn.clicked.connect(self.menuButtonClick)
 
     # 获取底部扩展按钮
     self.expand_btn = self.ui.bottomExpbtn
@@ -106,6 +116,8 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_2)
     if btnName == "test2_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_3)
+    if btnName == "lane_btn":
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_4)
 
   def expanding_menu(self):
     width = self.ui.frame.width()

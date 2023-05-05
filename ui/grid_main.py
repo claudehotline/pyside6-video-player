@@ -241,6 +241,9 @@ class Ui_MainWindow(object):
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
         self.stackedWidget.addWidget(self.page_3)
+        self.page_4 = QWidget()
+        self.page_4.setObjectName(u"page_4")
+        self.stackedWidget.addWidget(self.page_4)
 
         self.horizontalLayout_3.addWidget(self.stackedWidget)
 
@@ -271,7 +274,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

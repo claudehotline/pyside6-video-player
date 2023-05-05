@@ -12,6 +12,7 @@ from analyzer.ActionAnalyzer import ActionAnalyzer
 from analyzer.transport.DeepLaneDetector import DeepLaneDetector
 from analyzer.TrackingDetector import TrackingDetector
 from analyzer.transport.CarCountDetector import CarCountDetector
+from analyzer.transport.CarRecognitionDetector import CarRecognitionDetector
 
 class VideoFrameProcessor(QObject):
     
@@ -52,6 +53,10 @@ class VideoFrameProcessor(QObject):
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/tracking' + os.path.sep + model_list[1]
             self.detector = CarCountDetector(model_path1, model_path2, [2])
+        elif detectType == '车辆识别':
+            model_path1 = 'model/detect' + os.path.sep + model_list[0]
+            model_path2 = 'model/tracking' + os.path.sep + model_list[1]
+            self.detector = CarRecognitionDetector(model_path1, model_path2, [2])
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):
@@ -110,7 +115,7 @@ class VideoFrameProcessor(QObject):
                 self.detecting = False
             end_detect_time = time.time()
             detect_time=end_detect_time-start_detect_time
-            print('detect_time:', detect_time)
+            # print('detect_time:', detect_time)
             # 使用time.sleep 控制帧速为25帧/s   1/25=0.04s
             if detect_time < 0.033:
                 time.sleep(0.033 - detect_time)
