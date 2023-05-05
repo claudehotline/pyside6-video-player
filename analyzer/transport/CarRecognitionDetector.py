@@ -28,11 +28,6 @@ class CarRecognitionDetector(TrackingDetector):
             'model/ocr/dbnet',
             device,
             0)
-        
-        # self.text_recognizer = TextRecognizer(
-        #     'model/ocr/sar',
-        #     device,
-        #     0)
     
     def drawbox(self, image, bboxes, line_thickness=None):
 
