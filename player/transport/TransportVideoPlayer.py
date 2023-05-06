@@ -1,6 +1,6 @@
 from PySide6.QtCore import Signal, Slot
-from .VideoFrameProcessor import VideoFrameProcessor
-from .VideoPlayer import VideoPlayer
+from ..VideoFrameProcessor import VideoFrameProcessor
+from ..VideoPlayer import VideoPlayer
 
 class TransportVideoPlayer(VideoPlayer):
 

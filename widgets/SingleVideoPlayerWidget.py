@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget, QProgressBar, QLabel
 from ui.single_video_player_widget import Ui_Form
 
 from player.VideoPlayer import VideoPlayer
-from player.TransportVideoPlayer import TransportVideoPlayer
+from player.transport.TransportVideoPlayer import TransportVideoPlayer
 from widgets.PlayerSettingDialog import PlayerSettingDialog
 
 import numpy as np

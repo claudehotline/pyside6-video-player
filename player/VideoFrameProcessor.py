@@ -57,6 +57,10 @@ class VideoFrameProcessor(QObject):
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/tracking' + os.path.sep + model_list[1]
             self.detector = CarRecognitionDetector(model_path1, model_path2, [2])
+        elif detectType == '车道线检测':
+            model_path1 = 'model/detect' + os.path.sep + model_list[0]
+            model_path2 = 'model/tracking' + os.path.sep + model_list[1]
+            self.detector = DeepLaneDetector()
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):

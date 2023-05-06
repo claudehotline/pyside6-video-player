@@ -107,9 +107,16 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.test2_btn)
 
+        self.car_rec_btn = QPushButton(self.top_menu)
+        self.car_rec_btn.setObjectName(u"car_rec_btn")
+        self.car_rec_btn.setMinimumSize(QSize(60, 45))
+
+        self.verticalLayout_3.addWidget(self.car_rec_btn)
+
         self.lane_btn = QPushButton(self.top_menu)
         self.lane_btn.setObjectName(u"lane_btn")
         self.lane_btn.setMinimumSize(QSize(60, 45))
+        self.lane_btn.setMaximumSize(QSize(16777215, 16777215))
 
         self.verticalLayout_3.addWidget(self.lane_btn)
 
@@ -244,6 +251,9 @@ class Ui_MainWindow(object):
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
         self.stackedWidget.addWidget(self.page_4)
+        self.page_5 = QWidget()
+        self.page_5.setObjectName(u"page_5")
+        self.stackedWidget.addWidget(self.page_5)
 
         self.horizontalLayout_3.addWidget(self.stackedWidget)
 
@@ -274,7 +284,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -292,7 +302,9 @@ class Ui_MainWindow(object):
         self.test1_btn.setText(QCoreApplication.translate("MainWindow", u"\u8d85\u5206\u8fa8\u7387", None))
         self.test2_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u6d41\u91cf\n"
 "\u7edf\u8ba1", None))
-        self.lane_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u8f86\u8bc6\u522b", None))
+        self.car_rec_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u8f86\u8bc6\u522b", None))
+        self.lane_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u9053\u7ebf\n"
+"\u68c0\u6d4b", None))
         self.bottomExpbtn.setText(QCoreApplication.translate("MainWindow", u"push", None))
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"setting", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"score\u9608\u503c\uff1a", None))

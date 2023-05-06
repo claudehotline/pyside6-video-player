@@ -6,8 +6,9 @@ from PySide6.QtCore import QPropertyAnimation, QEasingCurve
 from PySide6.QtWidgets import QMainWindow, QApplication, QMenu, QHBoxLayout, QLabel
 from widgets.VideoPlayerTableWidget import VideoPlayerTableWidget
 from widgets.VsrAnalysisWidget import VsrAnalysisWidget
-from widgets.TransportMonitoringWidget import TransportMonitoringWidget
-from widgets.CarRecognitionWidget import CarRecognitionWidget
+from widgets.transport.TransportMonitoringWidget import TransportMonitoringWidget
+from widgets.transport.CarRecognitionWidget import CarRecognitionWidget
+from widgets.transport.LaneDetectionWidget import LaneDetectionWidget
 
 class MainWindow(QMainWindow):
     
@@ -51,6 +52,13 @@ class MainWindow(QMainWindow):
     carRecognitionWidget = CarRecognitionWidget(self.car_recognition_page)
     self.car_recognition_page.layout().addWidget(carRecognitionWidget)
 
+    # 设置 page5 为车道线检测页面
+    self.lane_detection_page = self.ui.page_5
+    self.lane_detection_page.setLayout(QHBoxLayout())
+    self.lane_detection_page.layout().setContentsMargins(0, 0, 0, 0)
+    laneDetectionWidget = LaneDetectionWidget(self.lane_detection_page)
+    self.lane_detection_page.layout().addWidget(laneDetectionWidget)
+
     # 获取menuBar
     self.menuBar = self.ui.menubar
     # 获取setting菜单项
@@ -85,6 +93,8 @@ class MainWindow(QMainWindow):
     self.test1_btn.clicked.connect(self.menuButtonClick)
     self.test2_btn = self.ui.test2_btn
     self.test2_btn.clicked.connect(self.menuButtonClick)
+    self.car_rec_btn = self.ui.car_rec_btn
+    self.car_rec_btn.clicked.connect(self.menuButtonClick)
     self.lane_btn = self.ui.lane_btn
     self.lane_btn.clicked.connect(self.menuButtonClick)
 
@@ -116,8 +126,10 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_2)
     if btnName == "test2_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_3)
-    if btnName == "lane_btn":
+    if btnName == "car_rec_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_4)
+    if btnName == "lane_btn":
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_5)
 
   def expanding_menu(self):
     width = self.ui.frame.width()

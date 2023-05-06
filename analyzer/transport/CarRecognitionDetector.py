@@ -1,11 +1,13 @@
 from analyzer.TrackingDetector import TrackingDetector
 import cv2
-from mmdeploy_python import TextDetector
+# from mmdeploy_python import TextDetector
 from mmdeploy_python import TextRecognizer
+from analyzer.YoloDetector import YoloDetector
 import numpy as np
 from analyzer import device
 from mmdeploy.apis.utils import build_task_processor
 from mmdeploy.utils import get_input_shape, load_config
+import time
 
 class CarRecognitionDetector(TrackingDetector):
 
@@ -23,11 +25,11 @@ class CarRecognitionDetector(TrackingDetector):
         self.text_recognizer = self.task_processor.build_backend_model(backend_model)
         self.input_shape = get_input_shape(deploy_cfg)
 
+        print('text recoginizor init')
+        
+        self.plate_detector = YoloDetector('model/detect/plate_yolov8n', [0])
 
-        self.text_detector = TextDetector(
-            'model/ocr/dbnet',
-            device,
-            0)
+        print('text_detector init')
     
     def drawbox(self, image, bboxes, line_thickness=None):
 
@@ -37,22 +39,24 @@ class CarRecognitionDetector(TrackingDetector):
         for (x1, y1, x2, y2, cls_id, track_id) in bboxes:
             # # 截取x1,y1, x2, y2 范围内的图像
             single_car = image[y1:y2,x1:x2]
-            
-            # do model inference
-            bboxes = self.text_detector(single_car)
-            # draw detected bbox into the input image
+            # cv2.imwrite('car_{}.jpg'.format(track_id), single_car)
+
+            # 在 image 上绘制矩形框
+            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), thickness=tl, lineType=cv2.LINE_AA)
+            # 在 image 上绘制track_id
+            cv2.putText(image, str(track_id), (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+            # 检测车号牌
+            bboxes, _ = self.plate_detector.getbox(single_car)
             pts = []
             if len(bboxes) > 0:
-                pts = ((bboxes[:, 0:8] + 0.5).reshape(len(bboxes), -1,
-                                                    2).astype(int))
+                pts = bboxes[:, 0:4].astype(int)
             for pt in pts:
-                # cv2.rectangle(single_car, pt[0], pt[2], color, -1, cv2.LINE_AA)
-                x1 = np.min(pt[:, 0])
-                x2 = np.max(pt[:, 0])
-                y1 = np.min(pt[:, 1])
-                y2 = np.max(pt[:, 1])
-                license = single_car[y1:y2,x1:x2]
-                cv2.imwrite('license.jpg', license)
+                cv2.rectangle(single_car, (pt[0],pt[1]), (pt[2],pt[3]), (0, 255, 0), 1, cv2.LINE_AA)
+                license = single_car[pt[1]:pt[3],pt[0]:pt[2]]
+                # cv2.imwrite('license_{}.jpg'.format(track_id), license)
                 model_inputs, _ = self.task_processor.create_input(license, self.input_shape)
                 result = self.text_recognizer.test_step(model_inputs)
-                print(result[0].pred_text.item)
+                # print(result[0].pred_text.item)
+                # 在bbox上面写上车牌号
+                cv2.putText(image, result[0].pred_text.item, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)

@@ -1,15 +1,15 @@
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QWidget, QFileDialog, QHBoxLayout
-from ui.transport_monitoring import Ui_Form
+from ui.car_recognition import Ui_Form
 from widgets.SingleVideoPlayerWidget import SingleVideoPlayerWidget
-from player.transport.TransportVideoPlayer import TransportVideoPlayer
+from player.VideoPlayer import VideoPlayer
 
-class TransportMonitoringWidget(QWidget):
+class LaneDetectionWidget(QWidget):
 
     start_analysis = Signal()
     
     def __init__(self, parent=None):
-        super(TransportMonitoringWidget, self).__init__(parent)
+        super(LaneDetectionWidget, self).__init__(parent)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
     
@@ -23,14 +23,11 @@ class TransportMonitoringWidget(QWidget):
         self.videoFrame.setLayout(QHBoxLayout())
         self.videoFrame.layout().setContentsMargins(0, 0, 0, 0)
         self.videoWidget = SingleVideoPlayerWidget()
-        self.videoWidget.set_video_player(TransportVideoPlayer())
+        self.videoWidget.set_video_player(VideoPlayer())
         self.videoFrame.layout().addWidget(self.videoWidget)
         self.videoWidget.set_setting_btn_visibility(False)
-        self.videoWidget.videoPlayer.send_car_count.connect(lambda up, down:self.update_car_count(up, down))
+        # self.videoWidget.videoPlayer.send_car_count.connect(lambda up, down:self.update_car_count(up, down))
 
-        # 车辆统计标签
-        self.upCarCountLabel = self.ui.upCarCountLabel
-        self.downCarCountLabel = self.ui.downCarCountLabel
 
     @Slot()
     def open_pic_dialog(self):
@@ -40,10 +37,4 @@ class TransportMonitoringWidget(QWidget):
             '.',
             self.file_dialog.setNameFilter('图像文件(*.mp4 *.avi *.mov *.mkv)')
         )
-        self.videoWidget.videoPlayer.set_player('车辆统计', ['yolov8', 'ckpt.t7'], self.video_path)
-        # , 'ckpt.t7'
-
-    @Slot(int, int)
-    def update_car_count(self, up_count, down_count):
-        self.upCarCountLabel.setText(str(up_count))
-        self.downCarCountLabel.setText(str(down_count))
+        self.videoWidget.videoPlayer.set_player('车道线检测', ['yolov8', 'ckpt.t7'], self.video_path)
