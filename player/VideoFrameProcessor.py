@@ -10,6 +10,7 @@ from analyzer.Segmentor import Segment
 from analyzer.PoseDetector import PoseDetect
 from analyzer.ActionAnalyzer import ActionAnalyzer
 from analyzer.transport.DeepLaneDetector import DeepLaneDetector
+from analyzer.transport.LaneDetector import LaneDetector
 from analyzer.TrackingDetector import TrackingDetector
 from analyzer.transport.CarCountDetector import CarCountDetector
 from analyzer.transport.CarRecognitionDetector import CarRecognitionDetector
@@ -60,7 +61,8 @@ class VideoFrameProcessor(QObject):
         elif detectType == '车道线检测':
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/tracking' + os.path.sep + model_list[1]
-            self.detector = DeepLaneDetector()
+            # self.detector = DeepLaneDetector()
+            self.detector = LaneDetector()
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):
