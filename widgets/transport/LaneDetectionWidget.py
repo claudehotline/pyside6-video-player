@@ -37,4 +37,4 @@ class LaneDetectionWidget(QWidget):
             '.',
             self.file_dialog.setNameFilter('图像文件(*.mp4 *.avi *.mov *.mkv)')
         )
-        self.videoWidget.videoPlayer.set_player('车道线检测', ['yolov8', 'ckpt.t7'], self.video_path)
+        self.videoWidget.videoPlayer.set_player('车道线检测', ['clrlane/culane_r34.onnx'], self.video_path)
