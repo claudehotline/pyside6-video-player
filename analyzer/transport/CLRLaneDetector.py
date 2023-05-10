@@ -55,11 +55,8 @@ class Lane:
         self.metadata = metadata or {}
 
         self.sample_y = range(710, 150, -10)
-        # self.sample_y = range(580, 150, -10)
         self.ori_img_w = 1280
         self.ori_img_h = 720
-        # self.ori_img_w = 1640
-        # self.ori_img_h = 590
 
     def __repr__(self):
         return '[Lane]\n' + str(self.points) + '\n[/Lane]'
@@ -125,21 +122,65 @@ class CLRLaneDetector:
         x = x - x.max(axis=axis, keepdims=True)
         y = np.exp(x)
         return y / y.sum(axis=axis, keepdims=True)
+    
+    def Lane_nms(self, proposals,scores,overlap=50, top_k=4):
+        keep_index = []
+        sorted_score = np.sort(scores)[-1] # from big to small 
+        indices = np.argsort(-scores) # from big to small 
+        
+        r_filters = np.zeros(len(scores))
+
+        for i,indice in enumerate(indices):
+            if r_filters[i]==1: # continue if this proposal is filted by nms before
+                continue
+            keep_index.append(indice)
+            if len(keep_index)>top_k: # break if more than top_k
+                break
+            if i == (len(scores)-1):# break if indice is the last one
+                break
+            sub_indices = indices[i+1:]
+            for sub_i,sub_indice in enumerate(sub_indices):
+                r_filter = self.Lane_IOU(proposals[indice,:],proposals[sub_indice,:],overlap)
+                if r_filter: r_filters[i+1+sub_i]=1 
+        num_to_keep = len(keep_index)
+        keep_index = list(map(lambda x: x.item(), keep_index))
+        return keep_index, num_to_keep
+    
+    def Lane_IOU(self, parent_box, compared_box, threshold):
+        '''
+        calculate distance one pair of proposal lines
+        return True if distance less than threshold 
+        '''
+        n_offsets=72
+        n_strips = n_offsets - 1
+
+        start_a = (parent_box[2] * n_strips + 0.5).astype(int) # add 0.5 trick to make int() like round  
+        start_b = (compared_box[2] * n_strips + 0.5).astype(int)
+        start = max(start_a,start_b)
+        end_a = start_a + parent_box[4] - 1 + 0.5 - (((parent_box[4] - 1)<0).astype(int))
+        end_b = start_b + compared_box[4] - 1 + 0.5 - (((compared_box[4] - 1)<0).astype(int))
+        end = min(min(end_a,end_b),71)
+        if (end - start)<0:
+            return False
+        dist = 0
+        for i in range(5+start,5 + end.astype(int)):
+            if i>(5+end):
+                 break
+            if parent_box[i] < compared_box[i]:
+                dist += compared_box[i] - parent_box[i]
+            else:
+                dist += parent_box[i] - compared_box[i]
+        return dist < (threshold * (end - start + 1))
 
     def predictions_to_pred(self, predictions):
-        # print('predictions', predictions.shape)
         lanes = []
         for lane in predictions:
             lane_xs = lane[6:]  # normalized value
-            # print('xs length: ', len(lane_xs))
-            # 3 车道线
             start = min(max(0, int(round(lane[2].item() * self.n_strips))),
                         self.n_strips)
-            # print('start', start)
             length = int(round(lane[5].item()))
             end = start + length - 1
             end = min(end, len(self.prior_ys) - 1)
-            # print('end', end)
             # end = label_end
             # if the prediction does not start at the bottom of the image,
             # extend its prediction until the x is outside the image
@@ -170,7 +211,6 @@ class CLRLaneDetector:
                             'conf': lane[1]
                         })
             lanes.append(lane)
-            print('lanes :', lanes)
         return lanes
 
     def get_lanes(self, output, as_lanes=True):
@@ -180,7 +220,6 @@ class CLRLaneDetector:
         decoded = []
         for predictions in output:
             # filter out the conf lower than conf threshold
-            # print(self.softmax(predictions[:, :2], 1))
             scores = self.softmax(predictions[:, :2], 1)[:, 1]
 
             keep_inds = scores >= self.conf_threshold
@@ -190,25 +229,25 @@ class CLRLaneDetector:
             if predictions.shape[0] == 0:
                 decoded.append([])
                 continue
-            #(11, 78)
             nms_predictions = predictions
+
             nms_predictions = np.concatenate(
                 [nms_predictions[..., :4], nms_predictions[..., 5:]], axis=-1)
     
             nms_predictions[..., 4] = nms_predictions[..., 4] * self.n_strips
-            nms_predictions[..., 5:] = nms_predictions[..., 5:] * (self.img_w - 1)
-            # print(nms_predictions[..., 5:][1])
-
-            # 将predictions的第6列至最后一列的值乘以img_w-1
-            predictions[:, 6:] = predictions[..., 6:] * (self.img_w - 1)
-            # print(predictions[..., 6:][1])
-
-            # keep = keep[:num_to_keep].cpu().numpy()
-            # predictions = predictions[keep]
-            predictions = np.array(self.nms(predictions, scores, 0.4, self.max_lanes))
-            predictions[:, 6:] = predictions[:, 6:] / (self.img_w - 1)
-            # predictions = predictions
+            nms_predictions[...,
+                            5:] = nms_predictions[..., 5:] * (self.img_w - 1)
             
+            
+            keep, num_to_keep = self.Lane_nms( 
+                nms_predictions,
+                scores,
+                self.nms_thres,
+                self.max_lanes)
+
+            keep = keep[:num_to_keep]
+            predictions = predictions[keep]
+
             if predictions.shape[0] == 0:
                 decoded.append([])
                 continue
@@ -258,34 +297,34 @@ class CLRLaneDetector:
         res = self.imshow_lanes(img_, output[0])
         return res
     
-    def distance(self, det1, det2):
-        e = 15
-        do = []
-        du = []
-        for i in range(6, len(det1)):
-            do.append(min(det1[i] + e, det2[i] + e) - max(det1[i] - e, det2[i] - e))
-            du.append(max(det1[i] + e, det2[i] + e) - min(det1[i] - e, det2[i] - e))
-        distance = np.sum(do) / np.sum(du)
+    # def distance(self, det1, det2):
+    #     e = 15
+    #     do = []
+    #     du = []
+    #     for i in range(6, len(det1)):
+    #         do.append(min(det1[i] + e, det2[i] + e) - max(det1[i] - e, det2[i] - e))
+    #         du.append(max(det1[i] + e, det2[i] + e) - min(det1[i] - e, det2[i] - e))
+    #     distance = np.sum(do) / np.sum(du)
 
-        return distance
+    #     return distance
 
-    def nms(self, detections, scores, nms_thres, top_k):
-        # 使用scores对detections进行降序排序
-        indices = np.argsort(scores)[::-1]
-        detections = detections[indices]
+    # def nms(self, detections, scores, nms_thres, top_k):
+    #     # 使用scores对detections进行降序排序
+    #     indices = np.argsort(scores)[::-1]
+    #     detections = detections[indices]
 
-        result = []
+    #     result = []
         
-        while detections.size > 0:
-            # 保留第一个detection
-            result.append(detections[0])
-            if len(result) == top_k:
-                return result
-            # 计算第一个detection与其他detection的距离
-            ious = np.array([self.distance(detections[0], detections[i]) for i in range(1, detections.shape[0])])
-            # print(ious)
-            # 将iou大于nms_thres的detection去除
-            keep_indices = np.where(ious <= nms_thres)[0]
-            # print(keep_indices)
-            detections = detections[keep_indices + 1]
-        return result
+    #     while detections.size > 0:
+    #         # 保留第一个detection
+    #         result.append(detections[0])
+    #         if len(result) == top_k:
+    #             return result
+    #         # 计算第一个detection与其他detection的距离
+    #         ious = np.array([self.distance(detections[0], detections[i]) for i in range(1, detections.shape[0])])
+    #         # print(ious)
+    #         # 将iou大于nms_thres的detection去除
+    #         keep_indices = np.where(ious <= nms_thres)[0]
+    #         # print(keep_indices)
+    #         detections = detections[keep_indices + 1]
+    #     return result
