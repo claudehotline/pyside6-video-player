@@ -54,9 +54,17 @@ class Lane:
 
         self.metadata = metadata or {}
 
-        self.sample_y = range(710, 150, -10)
-        self.ori_img_w = 1280
-        self.ori_img_h = 720
+        # self.sample_y = range(710, 150, -10)
+        # self.ori_img_w = 1280
+        # self.ori_img_h = 720
+
+        # self.sample_y = range(1070, 150, -10)
+        # self.ori_img_w = 1920
+        # self.ori_img_h = 1080
+
+        self.sample_y = range(470, 150, -10)
+        self.ori_img_w = 854
+        self.ori_img_h = 480
 
     def __repr__(self):
         return '[Lane]\n' + str(self.points) + '\n[/Lane]'
@@ -96,16 +104,28 @@ class CLRLaneDetector:
         self.ort_session = onnxruntime.InferenceSession(model_path)
         self.conf_threshold = 0.4
         self.nms_thres = 50
-        self.max_lanes = 5
+        self.max_lanes = 4
         self.sample_points = 36
         self.num_points = 72
         self.n_offsets = 72
         self.n_strips = 71
-        self.img_w = 1280
-        self.img_h = 720
-        self.ori_img_w = 1280
-        self.ori_img_h = 720
-        self.cut_height = 280
+        # self.img_w = 1280
+        # self.img_h = 720
+        # self.ori_img_w = 1280
+        # self.ori_img_h = 720
+        # self.cut_height = 280
+
+        # self.img_w = 1920
+        # self.img_h = 1080
+        # self.ori_img_w = 1920
+        # self.ori_img_h = 1080
+        # self.cut_height = 150
+
+        self.img_w = 854
+        self.img_h = 480
+        self.ori_img_w = 854
+        self.ori_img_h = 480
+        self.cut_height = 150
 
         self.input_width = 800
         self.input_height = 320

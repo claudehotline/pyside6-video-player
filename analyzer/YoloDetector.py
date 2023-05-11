@@ -7,7 +7,7 @@ class YoloDetector():
 
     def __init__(self, model_path, detect_labels=[]):
         self.detector = Detector(model_path, device, 0)
-        self.score_threshold = 0.5
+        self.score_threshold = 0.3
         self.detect_labels = detect_labels
 
     def detect(self, frame):
