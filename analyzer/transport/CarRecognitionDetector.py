@@ -7,7 +7,7 @@ import numpy as np
 from analyzer import device
 from mmdeploy.apis.utils import build_task_processor
 from mmdeploy.utils import get_input_shape, load_config
-import time
+from PIL import Image, ImageDraw, ImageFont
 
 class CarRecognitionDetector(TrackingDetector):
 
@@ -16,10 +16,14 @@ class CarRecognitionDetector(TrackingDetector):
         self.car_count_up = []
         self.car_count_down = []
 
+        self.fontpath = "C:/Windows/Fonts/simhei.ttf"
+        self.font = ImageFont.truetype(self.fontpath, 30)
+
         deploy_config = 'I:/mmdeploy/configs/mmocr/text-recognition/text-recognition_onnxruntime_dynamic.py'
-        model_cfg = 'I:/mmocr/configs/textrecog/sar/sar_resnet31_parallel-decoder_5e_st-sub_mj-sub_sa_real.py'
+        # model_cfg = 'I:/mmocr/configs/textrecog/sar/sar_resnet31_parallel-decoder_5e_st-sub_mj-sub_sa_real.py'
+        model_cfg = 'I:/mmocr/configs/textrecog/sar/sar_resnet31_parallel-decoder_5e_st-sub_mj-sub_sa_real_ccpd.py'
         device = 'cpu'
-        backend_model = ['model/ocr/sar/end2end.onnx']
+        backend_model = ['model/ocr/ort_plate/end2end.onnx']
         deploy_cfg, model_cfg = load_config(deploy_config, model_cfg)
         self.task_processor = build_task_processor(model_cfg, deploy_cfg, device)
         self.text_recognizer = self.task_processor.build_backend_model(backend_model)
@@ -57,6 +61,15 @@ class CarRecognitionDetector(TrackingDetector):
                 # cv2.imwrite('license_{}.jpg'.format(track_id), license)
                 model_inputs, _ = self.task_processor.create_input(license, self.input_shape)
                 result = self.text_recognizer.test_step(model_inputs)
+                result = result[0].pred_text.item
+
+                print(result)
+
+                image = Image.fromarray(image)
+                draw = ImageDraw.Draw(image)
+                draw.text((x1, y1), result, font=self.font, fill=(0, 0, 255))
+                image = np.asarray(image)
+        return image
                 # print(result[0].pred_text.item)
                 # 在bbox上面写上车牌号
-                cv2.putText(image, result[0].pred_text.item, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                # cv2.putText(image, result, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)

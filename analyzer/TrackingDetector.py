@@ -17,8 +17,8 @@ class TrackingDetector:
     def detect(self, frame):
         self.frameCounter += 1
         bboxes2draw = self.update_tracker(frame)
-        self.drawbox(frame, bboxes2draw)
-        return frame
+        image = self.drawbox(frame, bboxes2draw)
+        return image
     
     def update_tracker(self, image):
         bboxes, _ = self.model.getbox(image)
@@ -40,3 +40,4 @@ class TrackingDetector:
             cv2.rectangle(image, c1, c2, color, -1, cv2.LINE_AA)  # filled
             cv2.putText(image, '{} ID-{}'.format(str(cls_id), track_id), (c1[0], c1[1] - 2), 0, tl / 3,
                         [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+        return image
