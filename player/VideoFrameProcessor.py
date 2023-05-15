@@ -13,6 +13,7 @@ from analyzer.transport.DeepLaneDetector import DeepLaneDetector
 from analyzer.transport.OpencvLaneDetector import OpencvLaneDetector
 from analyzer.transport.LaneDetector import LaneDetector
 from analyzer.TrackingDetector import TrackingDetector
+from analyzer.SotTrackingDetector import SotTrackingDetector
 from analyzer.transport.CarCountDetector import CarCountDetector
 from analyzer.transport.CarRecognitionDetector import CarRecognitionDetector
 from analyzer.transport.CLRLaneDetector import CLRLaneDetector
@@ -49,9 +50,10 @@ class VideoFrameProcessor(QObject):
         elif detectType == '动作理解':
             self.detector = ActionAnalyzer()
         elif detectType == '目标追踪':
-            model_path1 = 'model/detect' + os.path.sep + model_list[0]
-            model_path2 = 'model/tracking' + os.path.sep + model_list[1]
-            self.detector = TrackingDetector(model_path1, model_path2, [0])
+            # model_path1 = 'model/detect' + os.path.sep + model_list[0]
+            # model_path2 = 'model/tracking' + os.path.sep + model_list[1]
+            # self.detector = TrackingDetector(model_path1, model_path2, [0])
+            self.detector = SotTrackingDetector()
         elif detectType == '车辆统计':
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/tracking' + os.path.sep + model_list[1]

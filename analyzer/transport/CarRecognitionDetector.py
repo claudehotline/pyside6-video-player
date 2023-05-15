@@ -61,6 +61,7 @@ class CarRecognitionDetector(TrackingDetector):
                 # cv2.imwrite('license_{}.jpg'.format(track_id), license)
                 model_inputs, _ = self.task_processor.create_input(license, self.input_shape)
                 result = self.text_recognizer.test_step(model_inputs)
+                print(result[0].pred_text.score)
                 result = result[0].pred_text.item
 
                 print(result)
