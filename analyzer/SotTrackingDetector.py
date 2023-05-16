@@ -1,26 +1,44 @@
 from utils.starktrack.stark_lightning_X_trt import STARK_LightningXtrt_onnx
 import cv2
+import threading
 
 class SotTrackingDetector:
 
     def __init__(self):
         self.tracker = STARK_LightningXtrt_onnx()
-
+        self.centerpoints = []
         self.frameCounter = 0
+        self.frame_disp = None
     
     def detect(self, frame):
-        bbox = []
         if self.frameCounter == 0:
-            bbox = [130, 61, 130 + 65, 61 + 55]
-            info = {'init_bbox': bbox}
-            self.tracker.initialize(frame, info)
+            thread = threading.Thread(target=self.init_frame_detect, args=(frame,))
+            thread.start()
+            thread.join()
         else:
-            print("frameCounter: ", self.frameCounter)
+            self.frame_disp = frame.copy()
             result = self.tracker.track(frame)
             bbox = result['target_bbox']
-            # print(bbox)
+            cv2.rectangle(self.frame_disp, (int(bbox[0]), int(bbox[1])), (int(bbox[0])+int(bbox[2]), int(bbox[1])+ int(bbox[3])), (0, 255, 0), 2)
+            # 在frame_disp上画出 self.centerpoints的所有点
+            self.centerpoints.append([int(bbox[0]) + int(bbox[2]) / 2, int(bbox[1]) + int(bbox[3]) / 2])
+            for i in range(len(self.centerpoints)):
+                cv2.circle(self.frame_disp, (int(self.centerpoints[i][0]), int(self.centerpoints[i][1])), 2, (0, 0, 255), 2)
 
         self.frameCounter += 1
-
-        cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (0, 255, 0), 2)
-        return frame
+        return self.frame_disp
+    
+    def init_frame_detect(self, frame):
+        self.frame_disp = frame.copy()
+        # cv2.imshow('选择跟踪目标', frame_disp)
+        cv2.namedWindow("选择跟踪目标", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("选择跟踪目标", 800, 600)
+        x, y, w, h = cv2.selectROI('选择跟踪目标', self.frame_disp, fromCenter=False)
+        bbox = [x, y, w, h]
+        info = {'init_bbox': bbox}
+        self.centerpoints.append([int(bbox[0]) + int(bbox[2]) / 2, int(bbox[1]) + int(bbox[3]) / 2])
+        self.tracker.initialize(frame, info)
+        cv2.rectangle(self.frame_disp, (int(bbox[0]), int(bbox[1])), (int(bbox[0]) + int(bbox[2]), int(bbox[1]) + int(bbox[3])), (0, 255, 0), 2)
+        # 在frame_disp上画出中点
+        cv2.circle(self.frame_disp, (int(int(bbox[0]) + int(bbox[2]) / 2), int(int(bbox[1]) + int(bbox[3]) / 2)), 2, (0, 0, 255), 2)
+        cv2.destroyAllWindows()

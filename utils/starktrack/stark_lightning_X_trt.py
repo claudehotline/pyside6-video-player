@@ -34,6 +34,7 @@ class STARK_LightningXtrt_onnx(BaseTracker):
         template_size = 128
         z_patch_arr, _, z_amask_arr = sample_target(image, info['init_bbox'], template_factor,
                                                     output_sz=template_size)
+        
         template, template_mask = self.preprocessor.process(z_patch_arr, z_amask_arr)
         # forward the template once
         ort_inputs = {'img_z': template, 'mask_z': template_mask}
