@@ -120,6 +120,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.lane_btn)
 
+        self.sot_btn = QPushButton(self.top_menu)
+        self.sot_btn.setObjectName(u"sot_btn")
+        self.sot_btn.setMinimumSize(QSize(60, 45))
+
+        self.verticalLayout_3.addWidget(self.sot_btn)
+
 
         self.verticalLayout.addWidget(self.top_menu, 0, Qt.AlignTop)
 
@@ -254,6 +260,9 @@ class Ui_MainWindow(object):
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
         self.stackedWidget.addWidget(self.page_5)
+        self.page_6 = QWidget()
+        self.page_6.setObjectName(u"page_6")
+        self.stackedWidget.addWidget(self.page_6)
 
         self.horizontalLayout_3.addWidget(self.stackedWidget)
 
@@ -284,7 +293,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(5)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -305,6 +314,8 @@ class Ui_MainWindow(object):
         self.car_rec_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u8f86\u8bc6\u522b", None))
         self.lane_btn.setText(QCoreApplication.translate("MainWindow", u"\u8f66\u9053\u7ebf\n"
 "\u68c0\u6d4b", None))
+        self.sot_btn.setText(QCoreApplication.translate("MainWindow", u"\u5355\u76ee\u6807\n"
+"\u8ffd\u8e2a", None))
         self.bottomExpbtn.setText(QCoreApplication.translate("MainWindow", u"push", None))
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"setting", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"score\u9608\u503c\uff1a", None))

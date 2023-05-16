@@ -246,7 +246,7 @@ class Ui_Dialog(object):
         self.detection.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u68c0\u6d4b", None))
         self.segmentation.setText(QCoreApplication.translate("Dialog", u"\u8bed\u4e49\u5206\u5272", None))
         self.poseRecognition.setText(QCoreApplication.translate("Dialog", u"\u59ff\u6001\u8bc6\u522b", None))
-        self.tracking.setText(QCoreApplication.translate("Dialog", u"\u76ee\u6807\u8ffd\u8e2a", None))
+        self.tracking.setText(QCoreApplication.translate("Dialog", u"\u591a\u76ee\u6807\u8ffd\u8e2a", None))
         self.actionRecognition.setText(QCoreApplication.translate("Dialog", u"\u52a8\u4f5c\u7406\u89e3", None))
         self.model1Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))
         self.model2Label.setText(QCoreApplication.translate("Dialog", u"\u9009\u62e9\u6a21\u578b", None))

@@ -7,11 +7,9 @@ class TrackingDetector:
 
     def __init__(self, model_path1, model_path2, tracking_class=[]):
         self.model = YoloDetector(model_path1, tracking_class)
-        
         self.tracker = BYTETracker(det_thresh=0.6, 
                     track_thresh=0.2, track_buffer=70, 
                     match_thresh=0.9, frame_rate=30)
-
         self.frameCounter = 0
     
     def detect(self, frame):
@@ -22,7 +20,6 @@ class TrackingDetector:
     
     def update_tracker(self, image):
         bboxes, _ = self.model.getbox(image)
-
         bboxes2draw = self.tracker.update(bboxes, (image.shape[1], image.shape[0]), (image.shape[1], image.shape[0]))
         bboxes2draw = np.array([[int(box.tlbr[0]), int(box.tlbr[1]), int(box.tlbr[2]), int(box.tlbr[3]), 2, int(box.track_id)]  for box in bboxes2draw])
         return bboxes2draw

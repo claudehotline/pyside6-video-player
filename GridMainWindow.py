@@ -9,6 +9,7 @@ from widgets.VsrAnalysisWidget import VsrAnalysisWidget
 from widgets.transport.TransportMonitoringWidget import TransportMonitoringWidget
 from widgets.transport.CarRecognitionWidget import CarRecognitionWidget
 from widgets.transport.LaneDetectionWidget import LaneDetectionWidget
+from widgets.SotWidget import SotWidget
 
 class MainWindow(QMainWindow):
     
@@ -59,6 +60,13 @@ class MainWindow(QMainWindow):
     laneDetectionWidget = LaneDetectionWidget(self.lane_detection_page)
     self.lane_detection_page.layout().addWidget(laneDetectionWidget)
 
+    # 设置 page6 单目标追踪页面
+    self.single_tracking_page = self.ui.page_6
+    self.single_tracking_page.setLayout(QHBoxLayout())
+    self.single_tracking_page.layout().setContentsMargins(0, 0, 0, 0)
+    self.sot_widget = SotWidget(self.single_tracking_page)
+    self.single_tracking_page.layout().addWidget(self.sot_widget)
+
     # 获取menuBar
     self.menuBar = self.ui.menubar
     # 获取setting菜单项
@@ -97,6 +105,8 @@ class MainWindow(QMainWindow):
     self.car_rec_btn.clicked.connect(self.menuButtonClick)
     self.lane_btn = self.ui.lane_btn
     self.lane_btn.clicked.connect(self.menuButtonClick)
+    self.sot_btn = self.ui.sot_btn
+    self.sot_btn.clicked.connect(self.menuButtonClick)
 
     # 获取底部扩展按钮
     self.expand_btn = self.ui.bottomExpbtn
@@ -130,6 +140,8 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_4)
     if btnName == "lane_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_5)
+    if btnName == "sot_btn":
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_6)
 
   def expanding_menu(self):
     width = self.ui.frame.width()
