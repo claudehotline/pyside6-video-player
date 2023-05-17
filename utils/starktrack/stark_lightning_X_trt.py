@@ -11,7 +11,7 @@ import onnxruntime
 
 
 class STARK_LightningXtrt_onnx(BaseTracker):
-    def __init__(self):
+    def __init__(self, id):
         super(STARK_LightningXtrt_onnx, self).__init__()
         """build two sessions"""
         '''2021.7.5 Add multiple gpu support'''
@@ -21,13 +21,15 @@ class STARK_LightningXtrt_onnx(BaseTracker):
         self.preprocessor = PreprocessorX_onnx()
         self.state = None
         # for debug
-        self.debug = False
+        # self.debug = False
         self.frame_id = 0
-        if self.debug:
-            self.save_dir = "debug"
-            if not os.path.exists(self.save_dir):
-                os.makedirs(self.save_dir)
+        self.track_id = id
+        # if self.debug:
+        #     self.save_dir = "debug"
+        #     if not os.path.exists(self.save_dir):
+        #         os.makedirs(self.save_dir)
         self.ort_outs_z = []
+        self.center_pos = []
 
     def initialize(self, image, info: dict):
         template_factor = 2.0
@@ -42,7 +44,10 @@ class STARK_LightningXtrt_onnx(BaseTracker):
 
         # save states
         self.state = info['init_bbox']
-        self.frame_id = 0
+
+        self.center_pos.append([self.state[0] + 0.5 * self.state[2], self.state[1] + 0.5 * self.state[3]])
+        # self.frame_id = 0
+        self.frame_id = 1
 
     def track(self, image):
         H, W, _ = image.shape
@@ -66,13 +71,14 @@ class STARK_LightningXtrt_onnx(BaseTracker):
         # get the final box result
         self.state = clip_box(self.map_box_back(pred_box, resize_factor), H, W, margin=10)
 
+        self.center_pos.append([self.state[0] + 0.5 * self.state[2], self.state[1] + 0.5 * self.state[3]])
         # for debug
-        if self.debug:
-            x1, y1, w, h = self.state
-            image_BGR = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            cv2.rectangle(image_BGR, (int(x1), int(y1)), (int(x1 + w), int(y1 + h)), color=(0, 0, 255), thickness=2)
-            save_path = os.path.join(self.save_dir, "%04d.jpg" % self.frame_id)
-            cv2.imwrite(save_path, image_BGR)
+        # if self.debug:
+        #     x1, y1, w, h = self.state
+        #     image_BGR = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        #     cv2.rectangle(image_BGR, (int(x1), int(y1)), (int(x1 + w), int(y1 + h)), color=(0, 0, 255), thickness=2)
+        #     save_path = os.path.join(self.save_dir, "%04d.jpg" % self.frame_id)
+        #     cv2.imwrite(save_path, image_BGR)
         return {"target_bbox": self.state}
 
     def map_box_back(self, pred_box: list, resize_factor: float):

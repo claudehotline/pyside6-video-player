@@ -16,3 +16,7 @@ class SotVideoPlayer(VideoPlayer):
     @Slot()
     def stop_tracking(self):
         self.videoFrameProcessor.detector.stop_tracking()
+
+    @Slot()
+    def add_target(self):
+        self.videoFrameProcessor.detector.add_tracker()

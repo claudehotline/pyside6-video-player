@@ -10,6 +10,7 @@ class SotWidget(QWidget):
     start_analysis = Signal()
     start_tracking = Signal()
     stop_tracking = Signal()
+    add_target = Signal()
 
     
     def __init__(self, parent=None):
@@ -30,6 +31,10 @@ class SotWidget(QWidget):
         self.stopTrackingBtn = self.ui.stopTrackBtn
         self.stopTrackingBtn.clicked.connect(self.stop_track)
 
+        # 添加追踪目标按钮
+        self.addTargetBtn = self.ui.addTargetBtn
+        self.addTargetBtn.clicked.connect(self.add_tracking_target)
+
         # 视频播放器
         self.videoFrame = self.ui.frame_4
         self.videoFrame.setLayout(QHBoxLayout())
@@ -42,6 +47,7 @@ class SotWidget(QWidget):
 
         self.start_tracking.connect(self.videoWidget.videoPlayer.start_tracking)
         self.stop_tracking.connect(self.videoWidget.videoPlayer.stop_tracking)
+        self.add_target.connect(self.videoWidget.videoPlayer.add_target)
 
     @Slot()
     def start_track(self):
@@ -50,6 +56,10 @@ class SotWidget(QWidget):
     @Slot()
     def stop_track(self):
         self.stop_tracking.emit()
+
+    @Slot()
+    def add_tracking_target(self):
+        self.add_target.emit()
 
     @Slot()
     def open_pic_dialog(self):

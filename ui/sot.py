@@ -67,6 +67,11 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.stopTrackBtn)
 
+        self.addTargetBtn = QPushButton(self.frame_2)
+        self.addTargetBtn.setObjectName(u"addTargetBtn")
+
+        self.horizontalLayout_2.addWidget(self.addTargetBtn)
+
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
@@ -140,6 +145,7 @@ class Ui_Form(object):
         self.videoSelectBtn.setText(QCoreApplication.translate("Form", u"\u9009\u62e9\u89c6\u9891", None))
         self.startTrackBtn.setText(QCoreApplication.translate("Form", u"\u5f00\u59cb\u8ffd\u8e2a", None))
         self.stopTrackBtn.setText(QCoreApplication.translate("Form", u"\u505c\u6b62\u8ffd\u8e2a", None))
+        self.addTargetBtn.setText(QCoreApplication.translate("Form", u"\u6dfb\u52a0\u76ee\u6807", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("Form", u"\u7edf\u8ba1\u4fe1\u606f", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("Form", u"\u9884\u7559", None))
     # retranslateUi
