@@ -52,7 +52,8 @@ class SotTrackingDetector:
         cv2.destroyAllWindows()
 
     def add_tracker(self):
-        self.tracker_list.append(STARK_LightningXtrt_onnx(len(self.tracker_list)+1))
+        # self.tracker_list.append(STARK_LightningXtrt_onnx(len(self.tracker_list)+1))
+        self.tracker_list.append(STARK_ST_onnx(len(self.tracker_list)+1))
 
     def start_tracking(self):
         self.is_tracking = True
