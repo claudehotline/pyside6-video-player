@@ -52,7 +52,7 @@ class VideoFrameProcessor(QObject):
         elif detectType == '多目标追踪':
             model_path1 = 'model/detect' + os.path.sep + model_list[0]
             model_path2 = 'model/tracking' + os.path.sep + model_list[1]
-            self.detector = TrackingDetector(model_path1, model_path2, [4])
+            self.detector = TrackingDetector(model_path1, model_path2, [2])
         elif detectType == '单目标追踪':
             self.detector = SotTrackingDetector()
         elif detectType == '车辆统计':

@@ -13,7 +13,7 @@ class SotTrackingDetector:
         # self.tracker_list.append(STARK_LightningXtrt_onnx(1))
         print('init stark_s')
         self.frame_disp = None
-        self.is_tracking = True
+        self.is_tracking = False
     
     def detect(self, frame):
         if self.is_tracking == True:
@@ -26,8 +26,9 @@ class SotTrackingDetector:
                 else:
                     result = tracker.track(frame)
                     bbox = result['target_bbox']
+                    if len(bbox) == 4:
                     # 在frame_disp上画出bbox
-                    cv2.rectangle(self.frame_disp, (int(bbox[0]), int(bbox[1])), (int(bbox[0])+int(bbox[2]), int(bbox[1])+ int(bbox[3])), (0, 255, 0), 2)
+                        cv2.rectangle(self.frame_disp, (int(bbox[0]), int(bbox[1])), (int(bbox[0])+int(bbox[2]), int(bbox[1])+ int(bbox[3])), (0, 255, 0), 2)
                     # 在frame_disp上画出 self.centerpoints的所有点
                     for i in range(len(tracker.center_pos)):
                         cv2.circle(self.frame_disp, (int(tracker.center_pos[i][0]), int(tracker.center_pos[i][1])), 2, (0, 0, 255), 2)
