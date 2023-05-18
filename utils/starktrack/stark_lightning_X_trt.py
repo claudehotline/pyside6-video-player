@@ -1,12 +1,8 @@
-from utils.starktrack.lib.test.tracker.basetracker import BaseTracker
-import torch
-from utils.starktrack.lib.train.data.processing_utils import sample_target
-# for debug
-import cv2
-import os
-from utils.starktrack.lib.utils.box_ops import clip_box
+from lib.test.tracker.basetracker import BaseTracker
+from lib.train.data.processing_utils import sample_target
+from lib.utils.box_ops import clip_box
 # for onnxruntime
-from utils.starktrack.lib.test.tracker.stark_utils import PreprocessorX_onnx
+from lib.test.tracker.stark_utils import PreprocessorX_onnx
 import onnxruntime
 
 

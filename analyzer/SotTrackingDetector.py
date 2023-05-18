@@ -1,4 +1,6 @@
 from utils.starktrack.stark_lightning_X_trt import STARK_LightningXtrt_onnx
+from utils.starktrack.stark_s import STARK_S_onnx
+from utils.starktrack.stark_st import STARK_ST_onnx
 import cv2
 import threading
 
@@ -6,8 +8,10 @@ class SotTrackingDetector:
 
     def __init__(self):
         self.tracker_list = []
-        self.tracker_list.append(STARK_LightningXtrt_onnx(1))
-        # self.tracker_list.append(STARK_LightningXtrt_onnx(2))
+        self.tracker_list.append(STARK_ST_onnx(1))
+        # self.tracker_list.append(STARK_S_onnx(1))
+        # self.tracker_list.append(STARK_LightningXtrt_onnx(1))
+        print('init stark_s')
         self.frame_disp = None
         self.is_tracking = True
     
