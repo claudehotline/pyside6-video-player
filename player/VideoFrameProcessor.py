@@ -92,7 +92,7 @@ class VideoFrameProcessor(QObject):
         self.detecting = status
 
     def decoding_finished(self):
-        print('decoding_finished')
+        # print('decoding_finished')
         self.is_decoding_finished = True
 
     def set_is_finished(self, status):

@@ -58,5 +58,5 @@ class OpencvVideoDecoder(QObject):
     
     self.decoding = False
       # cv2.waitKey(int(1000 / 40))
-    print('decoder stop')
+    # print('decoder stop')
     self.decoding_finished.emit()

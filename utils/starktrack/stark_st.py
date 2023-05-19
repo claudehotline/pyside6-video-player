@@ -37,14 +37,20 @@ class STARK_ST_onnx(BaseTracker):
         self.ort_outs_z = {}
         self.ort_outs_z_list = []
         self.center_pos = []
-        self.num_extra_template = 1
+        self.num_extra_template = 2
+
+        self.template_factor = 2.0
+        # self.template_factor = 1.0
+        self.template_size = 128
+
+        self.search_factor = 5.0
+        # self.search_factor = 2.0
+        self.search_size = 320
 
     def initialize(self, image, info: dict):
-        template_factor = 2.0
-        template_size = 128
-        z_patch_arr, _, z_amask_arr = sample_target(image, info['init_bbox'], template_factor,
-                                                    output_sz=template_size)
-        cv2.imwrite('z_patch_init_arr.jpg', z_patch_arr)
+        z_patch_arr, _, z_amask_arr = sample_target(image, info['init_bbox'], self.template_factor,
+                                                    output_sz=self.template_size)
+        cv2.imwrite('z_patch_init_arr_{}.jpg'.format(self.track_id), z_patch_arr)
         template, template_mask = self.preprocessor.process(
             z_patch_arr, z_amask_arr)
         # forward the template once
@@ -66,10 +72,9 @@ class STARK_ST_onnx(BaseTracker):
     def track(self, image):
         H, W, _ = image.shape
         self.frame_id += 1
-        search_factor = 5.0
-        search_size = 320
-        x_patch_arr, resize_factor, x_amask_arr = sample_target(image, self.state, search_factor,
-                                                                output_sz=search_size)  # (x1, y1, w, h)
+        x_patch_arr, resize_factor, x_amask_arr = sample_target(image, self.state, self.search_factor,
+                                                                output_sz=self.search_size)  # (x1, y1, w, h)
+        cv2.imwrite('x_patch_arr_{}.jpg'.format(self.track_id), x_patch_arr)
         search, search_mask = self.preprocessor.process(
             x_patch_arr, x_amask_arr)
 
@@ -91,7 +96,7 @@ class STARK_ST_onnx(BaseTracker):
 
         ort_outs = self.ort_sess_x.run(None, ort_inputs)
         # print('ort_out: ', ort_outs)
-        pred_box = (ort_outs[0].reshape(4) * search_size /
+        pred_box = (ort_outs[0].reshape(4) * self.search_size /
                     resize_factor).tolist()  # (cx, cy, w, h) [0,1]
         # print('pred_box: ', pred_box)
         self.state = clip_box(self.map_box_back(
@@ -99,22 +104,19 @@ class STARK_ST_onnx(BaseTracker):
         # self.state = pred_box
         # print('state: ', self.state)
         conf_score = ort_outs[1].tolist()[0]
-        print('conf_score: ', conf_score)
-        template_factor = 2.0
-        template_size = 128
-        for idx, update_i in enumerate([25]):
+        # print('conf_score: ', conf_score)
+        for idx, update_i in enumerate([25, 40]):
             # print('frame_id = ', self.frame_id)
-            if self.frame_id % update_i == 0 and conf_score > 0.6:
-                print('update template')
-                z_patch_arr, _, z_amask_arr = sample_target(image, self.state, template_factor,
-                                                            output_sz=template_size)
-                cv2.imwrite('z_patch_arr.jpg', z_patch_arr)
+            if self.frame_id % update_i == 0 and conf_score > 0.5:
+                z_patch_arr, _, z_amask_arr = sample_target(image, self.state, self.template_factor,
+                                                            output_sz=self.template_size)
+                cv2.imwrite('z_patch_arr_{}.jpg'.format(self.track_id), z_patch_arr)
                 template_t, template_mask = self.preprocessor.process(
                     z_patch_arr, z_amask_arr)
                 ort_inputs = {'img_z': template_t, 'mask_z': template_mask}
                 self.ort_outs_z_list[idx +
                                      1] = self.ort_sess_z.run(None, ort_inputs)
-        if conf_score > 0.6:
+        if conf_score > 0.5:
             self.center_pos.append(
                 [self.state[0] + 0.5 * self.state[2], self.state[1] + 0.5 * self.state[3]])
         # for debug
@@ -124,7 +126,7 @@ class STARK_ST_onnx(BaseTracker):
         #     cv2.rectangle(image_BGR, (int(x1), int(y1)), (int(x1 + w), int(y1 + h)), color=(0, 0, 255), thickness=2)
         #     save_path = os.path.join(self.save_dir, "%04d.jpg" % self.frame_id)
         #     cv2.imwrite(save_path, image_BGR)
-        if conf_score > 0.6:
+        if conf_score > 0.5:
             return {"target_bbox": self.state}
         else:
             return {"target_bbox": []}
