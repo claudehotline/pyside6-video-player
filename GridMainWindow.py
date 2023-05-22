@@ -67,6 +67,11 @@ class MainWindow(QMainWindow):
     self.sot_widget = SotWidget(self.single_tracking_page)
     self.single_tracking_page.layout().addWidget(self.sot_widget)
 
+    # 设置 page7 深度估计页面
+    self.depth_estimate_page = self.ui.page_7
+    self.depth_estimate_page.setLayout(QHBoxLayout())
+    self.depth_estimate_page.layourt().setContentMargins(0, 0, 0, 0)
+
     # 获取menuBar
     self.menuBar = self.ui.menubar
     # 获取setting菜单项

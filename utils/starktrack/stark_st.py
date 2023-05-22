@@ -59,7 +59,7 @@ class STARK_ST_onnx(BaseTracker):
         self.ort_outs_z_list.append(self.ort_outs_z)
         for i in range(self.num_extra_template):
             self.ort_outs_z_list.append(deepcopy(self.ort_outs_z))
-        print('ort_outs_z_list: ', len(self.ort_outs_z_list))
+        # print('ort_outs_z_list: ', len(self.ort_outs_z_list))
 
         # save states
         self.state = info['init_bbox']

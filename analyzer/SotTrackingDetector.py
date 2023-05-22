@@ -45,7 +45,7 @@ class SotTrackingDetector:
         x, y, w, h = cv2.selectROI('选择跟踪目标', self.frame_disp, fromCenter=False)
         bbox = [x, y, w, h]
         info = {'init_bbox': bbox}
-        print('cv2 bbox: ', bbox)
+        # print('cv2 bbox: ', bbox)
         tracker.initialize(frame, info)
         cv2.rectangle(self.frame_disp, (int(bbox[0]), int(bbox[1])), (int(bbox[0]) + int(bbox[2]), int(bbox[1]) + int(bbox[3])), (0, 255, 0), 2)
         # 在frame_disp上画出中点

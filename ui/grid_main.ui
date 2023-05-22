@@ -251,6 +251,19 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="depth_btn">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>深度估计</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -499,7 +512,7 @@
           <number>1</number>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>6</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QGridLayout" name="gridLayout">
@@ -543,6 +556,7 @@
          <widget class="QWidget" name="page_4"/>
          <widget class="QWidget" name="page_5"/>
          <widget class="QWidget" name="page_6"/>
+         <widget class="QWidget" name="page_7"/>
         </widget>
        </item>
       </layout>
