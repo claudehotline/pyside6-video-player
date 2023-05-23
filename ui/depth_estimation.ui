@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
-    <height>640</height>
+    <width>916</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,7 +126,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -149,19 +149,6 @@
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_5">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <property name="midLineWidth">
-            <number>0</number>
            </property>
           </widget>
          </item>

@@ -1,6 +1,7 @@
 import numpy as np
 from analyzer.YoloDetector import YoloDetector
 from utils.bytetrack.byte_tracker import BYTETracker
+from utils.cal_speed import Speed
 import cv2
 
 class TrackingDetector:
@@ -11,11 +12,14 @@ class TrackingDetector:
                     track_thresh=0.2, track_buffer=70, 
                     match_thresh=0.9, frame_rate=30)
         self.frameCounter = 0
+        self.prev_bboxes = []
     
     def detect(self, frame):
-        self.frameCounter += 1
         bboxes2draw = self.update_tracker(frame)
+        if self.frameCounter % 10 == 0:
+            self.prev_bboxes = bboxes2draw
         image = self.drawbox(frame, bboxes2draw)
+        self.frameCounter += 1
         return image
     
     def update_tracker(self, image):
@@ -34,7 +38,24 @@ class TrackingDetector:
             tf = max(tl - 1, 1)  # font thickness
             t_size = cv2.getTextSize(str(cls_id), 0, fontScale=tl / 3, thickness=tf)[0]
             c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
+
             cv2.rectangle(image, c1, c2, color, -1, cv2.LINE_AA)  # filled
-            cv2.putText(image, '{} ID-{}'.format(str(cls_id), track_id), (c1[0], c1[1] - 2), 0, tl / 3,
+            
+            location_two = x1, y1, x2-x1, y2-y1
+            # 获取 self.prev_bboxes[5] = track_id 的 bbox
+            location_one = self.prev_bboxes[self.prev_bboxes[...,5] == track_id]
+            # print('location_one length = ', len(location_one))
+            if len(location_one) > 0:
+                location_one = location_one[0]
+                location_one = location_one[0], location_one[1], location_one[2] - location_one[0], location_one[3] - location_one[1]
+                speed = Speed(location_one, location_two)
+                cv2.putText(image, '{} ID-{} speed-{:.2f} km/h'.format(str(cls_id), track_id, speed), (c1[0], c1[1] - 2), 0, tl / 3,
                         [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+            else:
+                cv2.putText(image, '{} ID-{}'.format(str(cls_id), track_id), (c1[0], c1[1] - 2), 0, tl / 3,
+                        [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+            # cv2.putText(image, '{} ID-{}'.format(str(cls_id), track_id), (c1[0], c1[1] - 2), 0, tl / 3,
+            #              [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+            
+            
         return image

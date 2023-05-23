@@ -2,6 +2,8 @@ import cv2
 from mmdeploy_python import Detector
 from analyzer import device
 import numpy as np
+from utils.yolo_distance import detect_distance_person
+from utils.yolo_distance import detect_distance_car
 
 class YoloDetector():
 
@@ -64,8 +66,23 @@ class YoloDetector():
                     (64, 192, 192), (192, 64, 192), (192, 192, 64), (64, 0, 192), (192, 0, 64), (64, 192, 0),
                     (192, 64, 0), (0, 192, 64), (0, 64, 192), (192, 128, 128), (128, 192, 128), (128, 128, 192), (192, 128, 192), (192, 192, 128), (128, 192, 192) ]    
         # 绘制矩形框
+        # 计算矩形框的高度
+        h = bottom - top
+        dis = 0
+        
         cv2.rectangle(frame, (left, top), (right, bottom), coco_colors[label_id], 1)
         cv2.rectangle(frame, (left, top-20), (left+100, top), coco_colors[label_id], cv2.FILLED)
-        # 绘制标签
-        cv2.putText(frame, coco_labels[label_id], (left, top-10),
+        if coco_labels[label_id] == 'person':
+            dis = detect_distance_person(h)
+            # 绘制标签
+            cv2.putText(frame, "{}  {}m".format(coco_labels[label_id], dis), (left, top-10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        elif coco_labels[label_id] == 'car':
+            dis = detect_distance_car(h)
+            # 绘制标签
+            cv2.putText(frame, "{}  {}m".format(coco_labels[label_id], dis), (left, top-10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        else:
+            # 绘制标签
+            cv2.putText(frame, coco_labels[label_id], (left, top-10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)

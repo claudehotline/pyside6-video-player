@@ -16,7 +16,6 @@ class VideoPlayer(QObject):
     start_decode = Signal()
     update_progress_bar = Signal(int)
     stop = Signal()
-    # send_car_count = Signal(int, int)
 
     def __init__(self):
         QObject.__init__(self)
@@ -31,9 +30,6 @@ class VideoPlayer(QObject):
 
         self.videoFrameReaderThread = QThread()
         self.videoFrameProcessorThread = QThread()
-
-        # self.set_videoFrameReader('video/08.mp4')
-        # self.set_videoFrameDetector('动作理解', ['yolov5s.pt'])
 
     @Slot(str, list, str)
     def set_player(self, detectType, model_list, video_path):
@@ -126,8 +122,11 @@ class VideoPlayer(QObject):
             self.videoFrameProcessor.set_detecting_status(False)
             self.play = status
         else:
+            print('begin setting frameProcessor status')
             self.videoFrameProcessor.set_detecting_status(True)
+            print('after setting frameProcessor status')
             self.start_detect.emit()
+            print('after set frameProcessor decode')
             self.play = status
 
     def get_setting_status(self):

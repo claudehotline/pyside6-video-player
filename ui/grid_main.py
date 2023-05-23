@@ -126,6 +126,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.sot_btn)
 
+        self.depth_btn = QPushButton(self.top_menu)
+        self.depth_btn.setObjectName(u"depth_btn")
+        self.depth_btn.setMinimumSize(QSize(60, 45))
+
+        self.verticalLayout_3.addWidget(self.depth_btn)
+
 
         self.verticalLayout.addWidget(self.top_menu, 0, Qt.AlignTop)
 
@@ -263,6 +269,9 @@ class Ui_MainWindow(object):
         self.page_6 = QWidget()
         self.page_6.setObjectName(u"page_6")
         self.stackedWidget.addWidget(self.page_6)
+        self.page_7 = QWidget()
+        self.page_7.setObjectName(u"page_7")
+        self.stackedWidget.addWidget(self.page_7)
 
         self.horizontalLayout_3.addWidget(self.stackedWidget)
 
@@ -293,7 +302,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(5)
+        self.stackedWidget.setCurrentIndex(6)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -316,6 +325,7 @@ class Ui_MainWindow(object):
 "\u68c0\u6d4b", None))
         self.sot_btn.setText(QCoreApplication.translate("MainWindow", u"\u5355\u76ee\u6807\n"
 "\u8ffd\u8e2a", None))
+        self.depth_btn.setText(QCoreApplication.translate("MainWindow", u"\u6df1\u5ea6\u4f30\u8ba1", None))
         self.bottomExpbtn.setText(QCoreApplication.translate("MainWindow", u"push", None))
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"setting", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"score\u9608\u503c\uff1a", None))

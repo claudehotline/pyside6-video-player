@@ -17,10 +17,12 @@ from analyzer.SotTrackingDetector import SotTrackingDetector
 from analyzer.transport.CarCountDetector import CarCountDetector
 from analyzer.transport.CarRecognitionDetector import CarRecognitionDetector
 from analyzer.transport.CLRLaneDetector import CLRLaneDetector
+from analyzer.DepthEstimator import DepthEstimator
 
 class VideoFrameProcessor(QObject):
     
     result = Signal(np.ndarray)
+    frame = Signal(np.ndarray)
     update_progress = Signal(int)
     start_decoding = Signal()
 
@@ -70,6 +72,9 @@ class VideoFrameProcessor(QObject):
             # model_path2 = 'model/tracking' + os.path.sep + model_list[1]
             # self.detector = DeepLaneDetector()
             self.detector = CLRLaneDetector(model_path)
+        elif detectType == '深度估计':
+            model_path = 'model\depth\manydepth\KITTI_MR'
+            self.detector = DepthEstimator(model_path)
         self.detecting = True
 
     def set_detector_score_threshold(self, score_threshold):
@@ -123,6 +128,7 @@ class VideoFrameProcessor(QObject):
                 cv2.putText(result, "FPS: {:.2f}".format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
                 self.result.emit(result)
+                self.frame.emit(frame)
             if self.frame_buffer.get_buffer_length() == 0 and self.is_decoding_finished:
                 print('视频处理结束')
                 self.detecting = False

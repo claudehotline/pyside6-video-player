@@ -10,6 +10,7 @@ from widgets.transport.TransportMonitoringWidget import TransportMonitoringWidge
 from widgets.transport.CarRecognitionWidget import CarRecognitionWidget
 from widgets.transport.LaneDetectionWidget import LaneDetectionWidget
 from widgets.SotWidget import SotWidget
+from widgets.DepthEstimateWidget import DepthEstimateWidget
 
 class MainWindow(QMainWindow):
     
@@ -70,7 +71,9 @@ class MainWindow(QMainWindow):
     # 设置 page7 深度估计页面
     self.depth_estimate_page = self.ui.page_7
     self.depth_estimate_page.setLayout(QHBoxLayout())
-    self.depth_estimate_page.layourt().setContentMargins(0, 0, 0, 0)
+    self.depth_estimate_page.layout().setContentsMargins(0, 0, 0, 0)
+    self.depth_estimate_widget = DepthEstimateWidget(self.depth_estimate_page)
+    self.depth_estimate_page.layout().addWidget(self.depth_estimate_widget)
 
     # 获取menuBar
     self.menuBar = self.ui.menubar
@@ -112,6 +115,8 @@ class MainWindow(QMainWindow):
     self.lane_btn.clicked.connect(self.menuButtonClick)
     self.sot_btn = self.ui.sot_btn
     self.sot_btn.clicked.connect(self.menuButtonClick)
+    self.depth_btn = self.ui.depth_btn
+    self.depth_btn.clicked.connect(self.menuButtonClick)
 
     # 获取底部扩展按钮
     self.expand_btn = self.ui.bottomExpbtn
@@ -147,6 +152,8 @@ class MainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_5)
     if btnName == "sot_btn":
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_6)
+    if btnName == "depth_btn":
+        self.ui.stackedWidget.setCurrentWidget(self.ui.page_7)
 
   def expanding_menu(self):
     width = self.ui.frame.width()
