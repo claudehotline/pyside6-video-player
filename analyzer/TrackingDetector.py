@@ -18,6 +18,7 @@ class TrackingDetector:
         bboxes2draw = self.update_tracker(frame)
         if self.frameCounter % 10 == 0:
             self.prev_bboxes = bboxes2draw
+        # self.prev_bboxes = bboxes2draw
         image = self.drawbox(frame, bboxes2draw)
         self.frameCounter += 1
         return image
@@ -48,7 +49,7 @@ class TrackingDetector:
             if len(location_one) > 0:
                 location_one = location_one[0]
                 location_one = location_one[0], location_one[1], location_one[2] - location_one[0], location_one[3] - location_one[1]
-                speed = Speed(location_one, location_two)
+                speed = Speed(location_one, location_two, self.frameCounter % 10)
                 cv2.putText(image, '{} ID-{} speed-{:.2f} km/h'.format(str(cls_id), track_id, speed), (c1[0], c1[1] - 2), 0, tl / 3,
                         [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
             else:

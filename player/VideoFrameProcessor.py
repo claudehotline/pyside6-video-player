@@ -18,6 +18,7 @@ from analyzer.transport.CarCountDetector import CarCountDetector
 from analyzer.transport.CarRecognitionDetector import CarRecognitionDetector
 from analyzer.transport.CLRLaneDetector import CLRLaneDetector
 from analyzer.DepthEstimator import DepthEstimator
+from analyzer.DetrDetector import DetrDetector
 
 class VideoFrameProcessor(QObject):
     
@@ -41,7 +42,8 @@ class VideoFrameProcessor(QObject):
         torch.cuda.empty_cache()
         if detectType == '目标检测':
             model_path = 'model/detect' + os.path.sep + model_list[0]
-            self.detector = YoloDetector(model_path)
+            # self.detector = YoloDetector(model_path)
+            self.detector = DetrDetector()
         elif detectType == '语义分割':
             model_path = 'model/seg' + os.path.sep + model_list[0]
             self.detector = Segment(model_path)
